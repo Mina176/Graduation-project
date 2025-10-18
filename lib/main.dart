@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/home_page.dart';
-import 'package:graduation_project/login_page.dart';
+import 'package:graduation_project/home_view.dart';
+import 'package:graduation_project/login_view.dart';
+import 'package:graduation_project/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -8,7 +9,7 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final String? name = prefs.getString('name');
   final String initialRoute =
-      (name == null || name.isEmpty) ? 'loginPage' : 'homePage';
+      (name == null || name.isEmpty) ? kLoginView : kHomeView;
 
   runApp(GraduationProject(initialRoute: initialRoute));
 }
@@ -23,8 +24,8 @@ class GraduationProject extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: initialRoute,
       routes: {
-        'loginPage': (context) => LoginPage(),
-        'homePage': (context) => HomePage(),
+        kLoginView: (context) => LoginView(),
+        kHomeView: (context) => HomeView(),
       },
     );
   }

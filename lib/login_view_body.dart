@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/home_page.dart';
+import 'package:graduation_project/home_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginPageBody extends StatefulWidget {
-  const LoginPageBody({super.key});
+class LoginViewBody extends StatefulWidget {
+  const LoginViewBody({super.key});
 
   @override
-  State<LoginPageBody> createState() => _LoginPageBodyState();
+  State<LoginViewBody> createState() => _LoginViewBodyState();
 }
 
-class _LoginPageBodyState extends State<LoginPageBody> {
+class _LoginViewBodyState extends State<LoginViewBody> {
   @override
   Widget build(BuildContext context) {
     TextEditingController nameController = TextEditingController();
@@ -49,7 +49,7 @@ class _LoginPageBodyState extends State<LoginPageBody> {
                   if (nameController.text.isEmpty) return;
                   saveName(nameController.text);
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return HomePage();
+                    return HomeView();
                   }));
                 },
                 child: Container(
