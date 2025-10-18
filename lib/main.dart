@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_project/home_page.dart';
+import 'package:graduation_project/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const GraduationProject());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final String? name = prefs.getString('name');
+  final String initialRoute =
+      (name == null || name.isEmpty) ? 'loginPage' : 'homePage';
+
+  runApp(GraduationProject(initialRoute: initialRoute));
 }
 
 class GraduationProject extends StatelessWidget {
-  const GraduationProject({super.key});
+  final String initialRoute;
+  const GraduationProject({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      initialRoute: initialRoute,
       routes: {
-        '/home': (context) => HomePage(),
+        'loginPage': (context) => LoginPage(),
+        'homePage': (context) => HomePage(),
       },
     );
   }
