@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_project/custom_list_item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeViewBody extends StatelessWidget {
@@ -12,10 +13,8 @@ class HomeViewBody extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     '${snapshot.data}',
@@ -24,6 +23,16 @@ class HomeViewBody extends StatelessWidget {
                   IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
                 ],
               ),
+              Expanded(
+                child: ListView.separated(
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const Divider(),
+                  itemBuilder: (context, index) {
+                    return CustomListTile();
+                  },
+                  itemCount: 10,
+                ),
+              )
             ],
           ),
         );

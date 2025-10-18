@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_project/constants.dart';
 import 'package:graduation_project/home_view_body.dart';
 
 class HomeView extends StatelessWidget {
@@ -9,7 +10,11 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: HomeViewBody(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: kConstantHorizontalPadding),
+          child: HomeViewBody(),
+        ),
       ),
     );
   }
