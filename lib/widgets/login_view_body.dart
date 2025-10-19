@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/home_view.dart';
+import 'package:graduation_project/views/home_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginViewBody extends StatefulWidget {

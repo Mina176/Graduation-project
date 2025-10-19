@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class CustomListTile extends StatelessWidget {
@@ -22,6 +21,14 @@ class CustomListTile extends StatelessWidget {
             Text('192.168.1.26', style: TextStyle(color: Colors.grey)),
           ],
         ),
+        const Spacer(),
+        MaterialButton(
+            onPressed: () {},
+            color: Colors.blueAccent,
+            textColor: Colors.white,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: const Text('Poke')),
       ],
     );
   }

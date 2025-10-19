@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_project/constants.dart';
-import 'package:graduation_project/home_view_body.dart';
+import 'package:graduation_project/widgets/home_view_body.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({
