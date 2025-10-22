@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:graduation_project/services/tcp/poke.dart';
+import 'package:graduation_project/services/tcp/poke_listener.dart';
 import 'package:graduation_project/services/udp/udp_discovery.dart';
 import 'package:graduation_project/widgets/custom_list_item.dart';
 
@@ -28,6 +30,7 @@ class _HomeViewScreenState extends State<HomeViewScreen> {
       await udp.sendingMessage(widget.name);
       print('sendingMessage');
     });
+    startPokeListener(context: context);
   }
 
   @override
@@ -53,7 +56,11 @@ class _HomeViewScreenState extends State<HomeViewScreen> {
                     return CustomListTile(
                       name: users.entries.elementAt(index).key,
                       localIpAddress: users.entries.elementAt(index).value,
-                      onPressed: () {},
+                      onPressed: () {
+                        sendPoke(
+                            targetIp: users.entries.elementAt(index).value,
+                            message: 'Hello from ${widget.name}');
+                      },
                     );
                   },
                 ),

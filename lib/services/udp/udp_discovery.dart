@@ -48,9 +48,9 @@ class UdpDescovery {
         if (datagram != null) {
           final message = utf8.decode(datagram.data);
           senderMessage = message.split('|');
-          if (localIpAdress == senderMessage[2]) {
-            continue;
-          }
+          // if (localIpAdress == senderMessage[2]) {
+          //   continue;
+          // }
 
           userInfo = {senderMessage[1]: senderMessage[2]};
 
