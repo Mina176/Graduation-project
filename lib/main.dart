@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/screens/login.dart';
+import 'package:graduation_project/screens/login_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  requestDevicePermission();
+  requestDevicePermissions();
   runApp(GraduationProject());
 }
 
@@ -17,11 +17,11 @@ class GraduationProject extends StatelessWidget {
   }
 }
 
-Future<void> requestDevicePermission() async {
+Future<void> requestDevicePermissions() async {
   var status = await Permission.nearbyWifiDevices.status;
 
   if (status.isDenied) {
-    print("Requesting Nearby Devices permission...");
     await Permission.nearbyWifiDevices.request();
   }
+
 }

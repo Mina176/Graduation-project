@@ -13,45 +13,34 @@ class CustomListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          width: 24,
-          height: 24,
+    return ListTile(
+      iconColor: Colors.green,
+      leading: const Icon(
+        Icons.devices,
+        size: 40,
+      ),
+      title: Text(
+        name,
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+      ),
+      subtitle: Text(
+        localIpAddress,
+        style: TextStyle(color: Colors.grey, fontSize: 16),
+      ),
+      trailing: GestureDetector(
+        onTap: onPressed,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
           decoration: BoxDecoration(
-            color: Colors.green,
-            borderRadius: BorderRadius.circular(50),
-          ),
-        ),
-
-        const SizedBox(width: 16),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              name,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-            ),
-            SizedBox(height: 4),
-            Text(
-              localIpAddress,
-              style: TextStyle(color: Colors.grey, fontSize: 14),
-            ),
-          ],
-        ),
-        Spacer(),
-        MaterialButton(
-          onPressed: onPressed,
-          color: Colors.blueAccent,
-          textColor: Colors.white,
-          shape: RoundedRectangleBorder(
+            color: Colors.blueAccent,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Text('Poke'),
+          child: Text(
+            'Poke',
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
         ),
-      ],
+      ),
     );
   }
 }
