@@ -19,14 +19,10 @@ class CustomListTile extends StatelessWidget {
         Icons.devices,
         size: 40,
       ),
-      title: Text(
-        name,
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-      ),
-      subtitle: Text(
-        localIpAddress,
-        style: TextStyle(color: Colors.grey, fontSize: 16),
-      ),
+      title: Text(name,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+      subtitle: Text(localIpAddress,
+          style: TextStyle(color: Colors.grey, fontSize: 16)),
       trailing: GestureDetector(
         onTap: onPressed,
         child: Container(

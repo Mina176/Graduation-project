@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_project/screens/home_screen.dart';
+import 'package:graduation_project/storage_helper/storage_helper.dart';
 import 'package:graduation_project/widgets/custom_btn.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -9,7 +10,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final userNameController = TextEditingController();
+  final nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextField(
-                controller: userNameController,
+                controller: nameController,
                 decoration: InputDecoration(
                     hintText: 'Enter your name',
                     border: buildOutlineBorder(Colors.grey),
@@ -31,12 +32,13 @@ class _LoginScreenState extends State<LoginScreen> {
               CustomBtn(
                 btnText: 'Login',
                 onTap: () {
-                  if (userNameController.text == '') return;
+                  if (nameController.text == '') return;
+                  StorageHelper().saveName(nameController.text);
+                  StorageHelper().setLoggedIn(true);
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          HomeView(name: userNameController.text),
+                      builder: (context) => HomeView(),
                     ),
                   );
                 },

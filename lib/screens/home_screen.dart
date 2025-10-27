@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:graduation_project/services/tcp/poke.dart';
 import 'package:graduation_project/services/tcp/poke_listener.dart';
 import 'package:graduation_project/services/udp/udp_discovery.dart';
+import 'package:graduation_project/storage_helper/storage_helper.dart';
 import 'package:graduation_project/widgets/custom_list_item.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({super.key, required this.name});
-  final String name;
+  const HomeView({
+    super.key,
+  });
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -26,7 +28,7 @@ class _HomeViewState extends State<HomeView> {
       setState(() {});
     });
     timer = Timer.periodic(const Duration(seconds: 5), (_) async {
-      await udp.sendingMessage(widget.name);
+      await udp.sendingMessage(await StorageHelper().loadName());
     });
     startPokeListener(context: context);
   }
@@ -41,7 +43,7 @@ class _HomeViewState extends State<HomeView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.name,
+                StorageHelper().loadName(),
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.w500),
               ),
               SizedBox(height: 16),
@@ -57,7 +59,8 @@ class _HomeViewState extends State<HomeView> {
                       onPressed: () {
                         sendPoke(
                             targetIp: users.entries.elementAt(index).value,
-                            message: 'Hello from ${widget.name}');
+                            message:
+                                'Hello from ${StorageHelper().loadName()}');
                       },
                     );
                   },
