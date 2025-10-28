@@ -1,18 +1,17 @@
 // ignore_for_file: use_build_context_synchronously
 import 'dart:io';
-
 import 'package:flutter/material.dart'; // For utf8 encoding
 
 // The port you agree on. Must be the same everywhere.
-const int pokePort = 4444;
+const int port = 4444;
 
 ServerSocket? _serverSocket; // Keep a reference to it
 
-Future<void> startPokeListener({required BuildContext context}) async {
+Future<void> startListener({required BuildContext context}) async {
   // Prevent starting multiple listeners
   if (_serverSocket != null) {
     sendSnackBar(
-      message: 'Poke listener is already running.',
+      message: 'listener is already running.',
       context: context,
     );
     return;
@@ -20,18 +19,18 @@ Future<void> startPokeListener({required BuildContext context}) async {
 
   try {
     // Bind the server to all available network interfaces on the port
-    _serverSocket = await ServerSocket.bind(InternetAddress.anyIPv4, pokePort);
+    _serverSocket = await ServerSocket.bind(InternetAddress.anyIPv4, port);
 
     sendSnackBar(
-      message: ' Poke listener started on port $pokePort.',
+      message: 'listener started on port $port.',
       context: context,
     );
-    // Listen for incoming connections
+    // Listen for incoming messages
     _serverSocket!.listen((Socket client) {
-      sendSnackBar(
-        message: ' Incoming poke from ${client.remoteAddress.address}',
-        context: context,
-      );
+      // sendSnackBar(
+      //   message: 'Incoming poke from ${client.remoteAddress.address}',
+      //   context: context,
+      // );
 
       // Handle data from the connected client
     });

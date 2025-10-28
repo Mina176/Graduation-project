@@ -50,7 +50,9 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  buildOutlineBorder(Color color) {
+  
+}
+buildOutlineBorder(Color color) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
       borderSide: BorderSide(
@@ -59,4 +61,3 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-}

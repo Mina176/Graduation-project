@@ -17,6 +17,7 @@ class StorageHelper {
   }
 
   /// Throws an error if init() hasn't been called.
+  /// use _safePrefs to access SharedPreferences safely.
   SharedPreferences get _safePrefs {
     if (_prefs == null) {
       throw Exception(
@@ -25,12 +26,16 @@ class StorageHelper {
     return _prefs!;
   }
 
-  void saveName(String name) {
-    _safePrefs.setString('name', name);
+  Future<void> saveName(String name) async {
+    await _safePrefs.setString('name', name);
   }
 
-  void setLoggedIn(bool isLoggedIn) {
-    _safePrefs.setBool(_isLoggedInKey, isLoggedIn);
+  Future<void> saveMessage(String message) async {
+    await _safePrefs.setString('message', message);
+  }
+
+  Future<void> setLoggedIn(bool isLoggedIn) async {
+    await _safePrefs.setBool(_isLoggedInKey, isLoggedIn);
   }
 
   String loadName() {

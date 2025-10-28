@@ -27,7 +27,6 @@ class GraduationProject extends StatelessWidget {
 
 Future<void> requestDevicePermissions() async {
   var status = await Permission.nearbyWifiDevices.status;
-
   if (status.isDenied) {
     await Permission.nearbyWifiDevices.request();
   }

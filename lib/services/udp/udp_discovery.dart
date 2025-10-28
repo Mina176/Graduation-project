@@ -3,60 +3,98 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-class UdpDescovery {
+class UdpDiscovery {
   final int port = 4444;
-  String? localIpAdress;
-  late Map<String, String> userInfo;
-  late List<String> senderMessage;
+  String? localIpAddress;
+  late RawDatagramSocket _socket;
   final Map<String, DateTime> onlineUsers = {};
-  Future<String> getIpAdress() async {
+  final StreamController<Map<String, String>> _userStreamController =
+      StreamController.broadcast();
+
+  // Expose the stream for your UI to listen to
+  Stream<Map<String, String>> get userStream => _userStreamController.stream;
+
+  late Map<String, String> _userInfo;
+  late List<String> _senderMessage;
+
+  Future<String> getIpAddress() async {
     List<NetworkInterface> interfaces = await NetworkInterface.list(
       type: InternetAddressType.IPv4,
       includeLoopback: false,
     );
+
     for (var interface in interfaces) {
       for (var address in interface.addresses) {
         print(address.address.toString());
-        localIpAdress = address.address;
-        return localIpAdress!;
+        localIpAddress = address.address;
+        return localIpAddress!;
       }
     }
     throw Exception('No ipv4 address found');
   }
 
-  Future<void> sendingMessage(String userName) async {
-    final RawDatagramSocket socket = await RawDatagramSocket.bind(
-      InternetAddress.anyIPv4,
-      port,
-    );
-    socket.broadcastEnabled = true;
-    localIpAdress = await getIpAdress();
-    final Uint8List message = utf8.encode('Hello|$userName|$localIpAdress');
-    print('this is the encoded hello message :$message');
-    //255.255.255.255 it is a special ip address that means send this packet to everyone on the local network
-    socket.send(message, InternetAddress('255.255.255.255'), port);
+  // 1. Initialize and bind the socket once
+  Future<void> initializeDiscovery() async {
+    localIpAddress = await getIpAddress();
+    _socket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, port);
+    _socket.broadcastEnabled = true;
+    print('UDPDiscovery socket initialized on port $port');
+    listenForUsers(); // Start listening immediately
   }
 
-  Stream<Map<String, String>> listenForUsers() async* {
-    final socket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, port);
+  // 2. Start sending periodic broadcasts
+  void startSending(String userName) {
+    Timer.periodic(const Duration(seconds: 5), (timer) {
+      // No need to send the IP, the packet header has it
+      final Uint8List message = utf8.encode('Hello|$userName');
+      try {
+        _socket.send(message, InternetAddress('255.255.255.255'), port);
+        // print('Sent broadcast: Hello|$userName');
+      } catch (e) {
+        print('Error sending broadcast: $e');
+      }
+    });
+  }
 
-    print('listening now');
-    localIpAdress ??= await getIpAdress();
-    await for (final event in socket) {
+  void listenForUsers() {
+    print('Listening for users...');
+    _socket.listen((RawSocketEvent event) {
       if (event == RawSocketEvent.read) {
-        final Datagram? datagram = socket.receive();
-        if (datagram != null) {
+        final Datagram? datagram = _socket.receive();
+        if (datagram == null) return;
+
+        // Get the sender's IP from the datagram packet
+        final String senderIp = datagram.address.address;
+
+        // Filter out our own messages
+        // if (senderIp == localIpAddress) {
+        //   return;
+        // }
+
+        try {
           final message = utf8.decode(datagram.data);
-          senderMessage = message.split('|');
-          // if (localIpAdress == senderMessage[2]) {
-          //   continue;
-          // }
+          final parts = message.split('|'); // e.g., ['Hello', 'UserName']
 
-          userInfo = {senderMessage[1]: senderMessage[2]};
+          if (parts.length == 2 && parts[0] == 'Hello') {
+            final String senderName = parts[1];
+            final Map<String, String> userInfo = {senderName: senderIp};
 
-          yield userInfo;
+            // Add to our stream for the UI
+            _userStreamController.add(userInfo);
+
+            // You can also update your onlineUsers map here
+            onlineUsers[senderIp] = DateTime.now();
+          }
+        } catch (e) {
+          print('Failed to decode message: $e');
         }
       }
-    }
+    });
+  }
+
+  // Call this when you're done
+  void dispose() {
+    _socket.close();
+    _userStreamController.close();
   }
 }

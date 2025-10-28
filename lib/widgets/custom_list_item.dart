@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomListTile extends StatelessWidget {
-  const CustomListTile({
+const CustomListTile({
     super.key,
     required this.name,
     required this.localIpAddress,
@@ -32,7 +32,7 @@ class CustomListTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
-            'Poke',
+            'Send',
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
         ),
