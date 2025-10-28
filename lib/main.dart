@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_project/screens/home_screen.dart';
 import 'package:graduation_project/screens/login_screen.dart';
+import 'package:graduation_project/screens/root_home_screen.dart';
 import 'package:graduation_project/storage_helper/storage_helper.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -20,7 +21,7 @@ class GraduationProject extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: isLoggedIn ? HomeView() : LoginScreen(),
+      home: isLoggedIn ? RootHomeScreen() : LoginScreen(),
     );
   }
 }

@@ -14,9 +14,6 @@ class UdpDiscovery {
   // Expose the stream for your UI to listen to
   Stream<Map<String, String>> get userStream => _userStreamController.stream;
 
-  late Map<String, String> _userInfo;
-  late List<String> _senderMessage;
-
   Future<String> getIpAddress() async {
     List<NetworkInterface> interfaces = await NetworkInterface.list(
       type: InternetAddressType.IPv4,
@@ -47,12 +44,7 @@ class UdpDiscovery {
     Timer.periodic(const Duration(seconds: 5), (timer) {
       // No need to send the IP, the packet header has it
       final Uint8List message = utf8.encode('Hello|$userName');
-      try {
-        _socket.send(message, InternetAddress('255.255.255.255'), port);
-        // print('Sent broadcast: Hello|$userName');
-      } catch (e) {
-        print('Error sending broadcast: $e');
-      }
+      _socket.send(message, InternetAddress('255.255.255.255'), port);
     });
   }
 
@@ -71,22 +63,17 @@ class UdpDiscovery {
         //   return;
         // }
 
-        try {
-          final message = utf8.decode(datagram.data);
-          final parts = message.split('|'); // e.g., ['Hello', 'UserName']
+        final message = utf8.decode(datagram.data);
+        final parts = message.split('|'); // e.g., ['Hello', 'UserName']
+        if (parts.length == 2 && parts[0] == 'Hello') {
+          final String senderName = parts[1];
+          final Map<String, String> userInfo = {senderIp: senderName};
 
-          if (parts.length == 2 && parts[0] == 'Hello') {
-            final String senderName = parts[1];
-            final Map<String, String> userInfo = {senderName: senderIp};
+          // Add to our stream for the UI
+          _userStreamController.add(userInfo);
 
-            // Add to our stream for the UI
-            _userStreamController.add(userInfo);
-
-            // You can also update your onlineUsers map here
-            onlineUsers[senderIp] = DateTime.now();
-          }
-        } catch (e) {
-          print('Failed to decode message: $e');
+          // You can also update your onlineUsers map here
+          onlineUsers[senderIp] = DateTime.now();
         }
       }
     });
