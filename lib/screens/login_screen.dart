@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/screens/home_screen.dart';
+import 'package:graduation_project/screens/root_home_screen.dart';
 import 'package:graduation_project/storage_helper/storage_helper.dart';
 import 'package:graduation_project/widgets/custom_btn.dart';
 
@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => HomeView(),
+                      builder: (context) => RootHomeScreen(),
                     ),
                   );
                 },
@@ -49,15 +49,14 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
-  
 }
+
 buildOutlineBorder(Color color) {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(
-        width: 2,
-        color: color,
-      ),
-    );
-  }
+  return OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8),
+    borderSide: BorderSide(
+      width: 2,
+      color: color,
+    ),
+  );
+}
