@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:graduation_project/storage_helper/message_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 const String _keyMessages = 'messages';
 
 class StorageHelper {
@@ -15,6 +16,7 @@ class StorageHelper {
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
   }
+
   /// Throws an error if init() hasn't been called.
   SharedPreferences get _safePrefs {
     if (_prefs == null) {
@@ -40,7 +42,8 @@ class StorageHelper {
     return _safePrefs.getBool(_isLoggedInKey) ?? false;
   }
 
-  Future<void> saveMessage(Message message) async {
+// start from here:
+  static Future<void> saveMessage(Message message) async {
     final messages = await loadMessages();
     messages.add(message);
     final prefs = await SharedPreferences.getInstance();
@@ -55,15 +58,17 @@ class StorageHelper {
 
     // 3. Save the JSON String to SharedPreferences
     await prefs.setString(_keyMessages, jsonString);
+    print(jsonString);
   }
 
   // --- Load List<Message> ---
-  Future<List<Message>> loadMessages() async {
+  static Future<List<Message>> loadMessages() async {
+    print('hello');
     final prefs = await SharedPreferences.getInstance();
 
     // 1. Get the JSON String from SharedPreferences
     final String? jsonString = prefs.getString(_keyMessages);
-//[{asdas,asd,asd,as,das},{}]
+
     // If no data is stored, return an empty list
     if (jsonString == null) {
       return [];
@@ -71,7 +76,7 @@ class StorageHelper {
 
     try {
       // 2. Decode the JSON String into a List<dynamic>
-      final List<Map<String, dynamic>> jsonList = jsonDecode(jsonString);
+      final List<dynamic> jsonList = jsonDecode(jsonString);
 
       // 3. Convert the List<dynamic> (maps) back to List<Message>
       final List<Message> messages = jsonList.map((jsonMap) {
@@ -86,3 +91,4 @@ class StorageHelper {
     }
   }
 }
+// add some print to know if the funtions is working

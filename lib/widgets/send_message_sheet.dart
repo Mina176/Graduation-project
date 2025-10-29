@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:graduation_project/screens/login_screen.dart';
 import 'package:graduation_project/services/tcp/poke.dart';
 import 'package:graduation_project/services/tcp/poke_listener.dart';
+import 'package:graduation_project/storage_helper/message_model.dart';
+import 'package:graduation_project/storage_helper/storage_helper.dart';
 import 'package:graduation_project/widgets/custom_btn.dart';
+import 'package:uuid/uuid.dart';
 
 class SendMessageSheet extends StatefulWidget {
   const SendMessageSheet({
@@ -20,7 +23,7 @@ class SendMessageSheet extends StatefulWidget {
 
 class _SendMessageSheetState extends State<SendMessageSheet> {
   TextEditingController messageContoller = TextEditingController();
-
+  var uuid = Uuid();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -54,7 +57,7 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
                 Expanded(
                   child: CustomBtn(
                     btnText: 'Send',
-                    onTap: () {
+                    onTap: () async {
                       if (messageContoller.text.isEmpty) {
                         return;
                       }
@@ -64,6 +67,8 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
                           targetIp: widget.userIp,
                           message: messageContoller.text // Use state variable
                           );
+                      await StorageHelper.saveMessage(
+                          Message(id: uuid.v4(), text: messageContoller.text));
                       messageContoller.clear();
                       sendSnackBar(
                           message:

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomListTile extends StatelessWidget {
-const CustomListTile({
+  const CustomListTile({
     super.key,
     required this.name,
     required this.localIpAddress,
@@ -21,8 +21,10 @@ const CustomListTile({
       ),
       title: Text(name,
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-      subtitle: Text(localIpAddress,
-          style: TextStyle(color: Colors.grey, fontSize: 16)),
+      subtitle: Text(
+        localIpAddress,
+        style: TextStyle(color: Colors.grey, fontSize: 16),
+      ),
       trailing: GestureDetector(
         onTap: onPressed,
         child: Container(
