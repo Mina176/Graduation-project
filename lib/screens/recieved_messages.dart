@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/storage_helper/message_model.dart';
-import 'package:graduation_project/storage_helper/storage_helper.dart';
+import 'package:graduation_project/services/storage_helper/message_model.dart';
+import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 
-class RecievedMessages extends StatefulWidget {
-  const RecievedMessages({
+class MessagesList extends StatefulWidget {
+  const MessagesList({
     super.key,
+    required this.type,
   });
-
+  final MessageType type;
   @override
-  State<RecievedMessages> createState() => _RecievedMessagesState();
+  State<MessagesList> createState() => _MessagesListState();
 }
 
-class _RecievedMessagesState extends State<RecievedMessages> {
+class _MessagesListState extends State<MessagesList> {
   StorageHelper savedMessage = StorageHelper();
   late Future<List<Message>> futureMessages;
 
   @override
   void initState() {
     super.initState();
-    futureMessages = StorageHelper.loadMessages();
+    futureMessages = StorageHelper().loadMessages(type: widget.type);
   }
 
   @override
@@ -28,7 +29,9 @@ class _RecievedMessagesState extends State<RecievedMessages> {
         actions: [
           IconButton(
               onPressed: () {
-                futureMessages = StorageHelper.loadMessages();
+                futureMessages =
+                    StorageHelper().loadMessages(type: widget.type);
+                setState(() {});
               },
               icon: Icon(Icons.refresh))
         ],
@@ -36,6 +39,9 @@ class _RecievedMessagesState extends State<RecievedMessages> {
       body: FutureBuilder(
         future: futureMessages,
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
           if (snapshot.hasData) {
             return ListView.builder(
               itemCount: snapshot.data!.length,

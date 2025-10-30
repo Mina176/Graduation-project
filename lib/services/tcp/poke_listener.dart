@@ -1,13 +1,18 @@
 // ignore_for_file: use_build_context_synchronously
 import 'dart:io';
-import 'package:flutter/material.dart'; // For utf8 encoding
+import 'package:flutter/material.dart';
+import 'package:graduation_project/services/storage_helper/message_model.dart';
+import 'package:graduation_project/services/storage_helper/storage_helper.dart';
+import 'package:uuid/uuid.dart'; // For utf8 encoding
 
 // The port you agree on. Must be the same everywhere.
 const int port = 4444;
-
+final Uuid uuid = Uuid();
 ServerSocket? _serverSocket; // Keep a reference to it
 
-Future<void> startListener({required BuildContext context}) async {
+Future<void> startListener({
+  required BuildContext context,
+}) async {
   // Prevent starting multiple listeners
   if (_serverSocket != null) {
     sendSnackBar(
@@ -27,12 +32,20 @@ Future<void> startListener({required BuildContext context}) async {
     );
     // Listen for incoming messages
     _serverSocket!.listen((Socket client) {
-      // sendSnackBar(
-      //   message: 'Incoming poke from ${client.remoteAddress.address}',
-      //   context: context,
-      // );
+      client.listen((data) async {
+        final receivedMessage = String.fromCharCodes(data);
+        final messageModel = Message(
+          id: uuid.v4(), // generate unique id
+          text: receivedMessage,
+        );
 
-      // Handle data from the connected client
+        await StorageHelper().saveMessage(
+          messageModel,
+          type: MessageType.received,
+        );
+
+        sendSnackBar(message: receivedMessage, context: context);
+      });
     });
   } catch (e) {
     sendSnackBar(

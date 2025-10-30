@@ -4,7 +4,7 @@ import 'package:graduation_project/screens/home_screen.dart';
 import 'package:graduation_project/screens/recieved_messages.dart';
 import 'package:graduation_project/services/tcp/poke_listener.dart';
 import 'package:graduation_project/services/udp/udp_discovery.dart';
-import 'package:graduation_project/storage_helper/storage_helper.dart';
+import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 
 class RootHomeScreen extends StatefulWidget {
   const RootHomeScreen({super.key});
@@ -106,9 +106,17 @@ class _RootHomeScreenState extends State<RootHomeScreen> {
         selectedIndex: currentIndex,
       ),
       body: <Widget>[
-        HomeScreen(onlineUsers: onlineUsers),
-        HomeScreen(onlineUsers: onlineUsers),
-        RecievedMessages(),
+        HomeScreen(
+          onlineUsers: onlineUsers,
+        ),
+        MessagesList(
+          key: Key('sent'),
+          type: MessageType.sent,
+        ),
+        MessagesList(
+          key: Key('received'),
+          type: MessageType.received,
+        ),
       ][currentIndex],
     );
   }

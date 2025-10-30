@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:graduation_project/services/tcp/poke_listener.dart'; // For utf8 encoding
@@ -22,7 +21,7 @@ Future<void> sendMessage({
     );
     print('Connected to $targetIp:$port for sending message.');
     // Send the message
-    socket.write(utf8.encode(message));
+    socket.write(message);
     // ignore: use_build_context_synchronously
     sendSnackBar(message: message, context: context);
 

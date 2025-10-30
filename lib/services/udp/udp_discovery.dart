@@ -59,9 +59,9 @@ class UdpDiscovery {
         final String senderIp = datagram.address.address;
 
         // Filter out our own messages
-        // if (senderIp == localIpAddress) {
-        //   return;
-        // }
+        if (senderIp == localIpAddress) {
+          return;
+        }
 
         final message = utf8.decode(datagram.data);
         final parts = message.split('|'); // e.g., ['Hello', 'UserName']

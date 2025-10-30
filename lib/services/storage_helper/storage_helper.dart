@@ -1,9 +1,12 @@
 import 'dart:convert';
 
-import 'package:graduation_project/storage_helper/message_model.dart';
+import 'package:graduation_project/services/storage_helper/message_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const String _keyMessages = 'messages';
+enum MessageType {
+  sent,
+  received;
+}
 
 class StorageHelper {
   StorageHelper._internal();
@@ -43,10 +46,9 @@ class StorageHelper {
   }
 
 // start from here:
-  static Future<void> saveMessage(Message message) async {
-    final messages = await loadMessages();
+  Future<void> saveMessage(Message message, {required MessageType type}) async {
+    final messages = await loadMessages(type: type);
     messages.add(message);
-    final prefs = await SharedPreferences.getInstance();
 
     // 1. Convert each Message to a Map using toJson()
     final List<Map<String, dynamic>> messageMaps = messages.map((msg) {
@@ -57,17 +59,17 @@ class StorageHelper {
     final String jsonString = jsonEncode(messageMaps);
 
     // 3. Save the JSON String to SharedPreferences
-    await prefs.setString(_keyMessages, jsonString);
+    await _safePrefs.setString(type.name, jsonString);
     print(jsonString);
   }
 
   // --- Load List<Message> ---
-  static Future<List<Message>> loadMessages() async {
+  Future<List<Message>> loadMessages({required MessageType type}) async {
+    await Future.delayed(Duration(seconds: 1));
     print('hello');
-    final prefs = await SharedPreferences.getInstance();
 
     // 1. Get the JSON String from SharedPreferences
-    final String? jsonString = prefs.getString(_keyMessages);
+    final String? jsonString = _safePrefs.getString(type.name);
 
     // If no data is stored, return an empty list
     if (jsonString == null) {
