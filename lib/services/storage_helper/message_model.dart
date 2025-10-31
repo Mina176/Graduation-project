@@ -2,18 +2,21 @@ import 'dart:convert';
 
 class Message {
   final String id;
-  final String text;
+  final String fileName;
+  final String content;
 
   Message({
     required this.id,
-    required this.text,
+    required this.fileName,
+    required this.content,
   });
 
   // 1. Factory constructor to create a Message from a JSON map
   factory Message.fromMap(Map<String, dynamic> json) {
     return Message(
       id: json['id'] as String,
-      text: json['text'] as String,
+      fileName: json['fileName'] as String,
+      content: json['content'] as String,
     );
   }
 
@@ -21,7 +24,8 @@ class Message {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'text': text,
+      'fileName': fileName,
+      'content': content,
     };
   }
 

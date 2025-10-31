@@ -79,7 +79,8 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
                       );
                       final messageModel = Message(
                         id: Uuid().v4(),
-                        text: encryptedMessage,
+                        fileName: 'message.txt',
+                        content: encryptedMessage,
                       );
                       // the sent message i want it to appear to the another user
                       sendMessage(

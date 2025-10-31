@@ -52,7 +52,7 @@ class _MessagesListState extends State<MessagesList> {
                     style: TextStyle(color: Colors.grey, fontSize: 16),
                   ),
                   subtitle: Text(
-                    snapshot.data![index].text,
+                    snapshot.data![index].content,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
                 );
