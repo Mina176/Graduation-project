@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Message {
   final String id;
   final String text;
@@ -22,4 +24,8 @@ class Message {
       'text': text,
     };
   }
+
+  String toJson() => jsonEncode(toMap());
+  factory Message.fromJson(String source) =>
+      Message.fromMap(jsonDecode(source));
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_project/key.dart';
+import 'package:graduation_project/key.dart';
 import 'package:graduation_project/screens/login_screen.dart';
+import 'package:graduation_project/services/encryption_helper.dart';
 import 'package:graduation_project/services/tcp/poke.dart';
 import 'package:graduation_project/services/tcp/poke_listener.dart';
 import 'package:graduation_project/services/storage_helper/message_model.dart';
@@ -61,12 +64,30 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
                         return;
                       }
                       Navigator.of(context).pop();
+                      final message = messageContoller.text;
+                      final secretKey = KeyProvider().data;
+                      if (secretKey == null) {
+                        sendSnackBar(
+                          message: 'Set a password first to enable encryption.',
+                          context: context,
+                        );
+                        return;
+                      }
+                      final encryptedMessage =
+                          await EncryptionHelper.encryptData(
+                        secretKey,
+                        message,
+                      );
                       // the sent message i want it to appear to the another user
                       sendMessage(
-                          context: context,
-                          targetIp: widget.userIp,
-                          // i want to use this in the listen function of the tcp
-                          message: messageContoller.text);
+                        context: context,
+                        targetIp: widget.userIp,
+                        // i want to use this in the listen function of the tcp
+                        message: Message(
+                          id: uuid.v4(),
+                          text: encryptedMessage,
+                        ),
+                      );
                       await StorageHelper().saveMessage(
                         Message(id: uuid.v4(), text: messageContoller.text),
                         type: MessageType.sent,

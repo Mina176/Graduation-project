@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'package:cryptography/cryptography.dart';
+import 'package:graduation_project/services/encryption_helper.dart';
 import 'package:graduation_project/services/storage_helper/message_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,6 +9,8 @@ enum MessageType {
   received;
 }
 
+const passwordKey = 'user_password';
+
 class StorageHelper {
   StorageHelper._internal();
   static final StorageHelper _instance = StorageHelper._internal();
@@ -15,9 +18,30 @@ class StorageHelper {
     return _instance;
   }
   SharedPreferences? _prefs;
-  static const _isLoggedInKey = 'isLoggedIn';
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
+  }
+  
+  
+
+
+  bool get isLoggedIn {
+    return _safePrefs.containsKey(passwordKey);
+  }
+
+  void savePassword(String password) async {
+    final key = await EncryptionHelper.deriveKeyFromPassword(password);
+    final keyBytes = await key.extractBytes();
+    final keyBase = base64Encode(keyBytes);
+    await _safePrefs.setString(passwordKey, keyBase);
+  }
+
+  SecretKey? loadPassword() {
+    final passwordBase64String = _safePrefs.getString(passwordKey);
+    if (passwordBase64String == null) throw '';
+    final decodedKey = base64Decode(passwordBase64String);
+    final key = SecretKey(decodedKey);
+    return key;
   }
 
   /// Throws an error if init() hasn't been called.
@@ -33,16 +57,8 @@ class StorageHelper {
     await _safePrefs.setString('name', name);
   }
 
-  Future<void> setLoggedIn(bool isLoggedIn) async {
-    await _safePrefs.setBool(_isLoggedInKey, isLoggedIn);
-  }
-
   String loadName() {
     return _safePrefs.getString('name') ?? 'Unknown';
-  }
-
-  bool isLoggedIn() {
-    return _safePrefs.getBool(_isLoggedInKey) ?? false;
   }
 
 // start from here:
@@ -92,7 +108,7 @@ class StorageHelper {
       return [];
     }
   }
-  
+
   Future<void> clearData() async {
     await _safePrefs.clear();
   }

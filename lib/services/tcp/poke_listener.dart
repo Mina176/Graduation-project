@@ -30,10 +30,7 @@ Future<void> startListener({
     serverSocket!.listen((Socket client) {
       client.listen((data) async {
         final receivedMessage = String.fromCharCodes(data);
-        final messageModel = Message(
-          id: uuid.v4(), // generate unique id
-          text: receivedMessage,
-        );
+        final messageModel = Message.fromJson(receivedMessage);
 
         await StorageHelper().saveMessage(
           messageModel,

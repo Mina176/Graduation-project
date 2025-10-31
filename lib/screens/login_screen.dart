@@ -11,6 +11,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final nameController = TextEditingController();
+  final passwordContoller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,18 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 controller: nameController,
                 decoration: InputDecoration(
-                    hintText: 'Enter your name',
+                    hintText: 'Enter name',
+                    border: buildOutlineBorder(Colors.grey),
+                    focusedBorder: buildOutlineBorder(Colors.blue)),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              TextField(
+                controller: passwordContoller,
+                obscureText: true,
+                decoration: InputDecoration(
+                    hintText: 'Enter Password',
                     border: buildOutlineBorder(Colors.grey),
                     focusedBorder: buildOutlineBorder(Colors.blue)),
               ),
@@ -32,9 +44,9 @@ class _LoginScreenState extends State<LoginScreen> {
               CustomBtn(
                 btnText: 'Login',
                 onTap: () {
-                  if (nameController.text == '') return;
+                  if (nameController.text.isEmpty || passwordContoller.text.isEmpty) return;
                   StorageHelper().saveName(nameController.text);
-                  StorageHelper().setLoggedIn(true);
+                  StorageHelper().savePassword(passwordContoller.text);
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(

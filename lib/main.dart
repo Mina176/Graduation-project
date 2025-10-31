@@ -8,7 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await StorageHelper().init();
   requestDevicePermissions();
-  final isLoggedIn = StorageHelper().isLoggedIn();
+  final isLoggedIn = StorageHelper().isLoggedIn;
   runApp(GraduationProject(isLoggedIn: isLoggedIn));
 }
 

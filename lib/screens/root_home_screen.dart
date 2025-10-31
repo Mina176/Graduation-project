@@ -72,12 +72,9 @@ class _RootHomeScreenState extends State<RootHomeScreen> {
 
   @override
   void dispose() {
-    // 4. Clean up resources when the widget is removed
     userSubscription?.cancel(); // Cancel the stream subscription (if it exists)
     udpDiscovery.dispose(); // Close the UDP socket
-    // Make sure to dispose of your TCP listener if needed (add a stop function)
-    // tcp_listener.stopListener(); // Example hypothetical function
-    serverSocket?.close(); // Close the TCP server socket
+    serverSocket?.close();
     serverSocket = null;
     super.dispose();
   }
