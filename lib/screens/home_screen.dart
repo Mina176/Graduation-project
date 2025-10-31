@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_project/screens/login_screen.dart';
 
 import 'package:graduation_project/services/storage_helper/storage_helper.dart';
+import 'package:graduation_project/widgets/custom_btn.dart';
 import 'package:graduation_project/widgets/custom_list_item.dart';
 import 'package:graduation_project/widgets/send_message_sheet.dart';
 
@@ -19,16 +21,31 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Hello, $userName!',
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.logout),
+              onPressed: () async {
+                await StorageHelper().clearData();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                  ),
+                );
+              })
+        ],
+      ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Hello, $userName!',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.w500),
-              ),
+              // CustomAppBar(userName: userName),
               SizedBox(height: 8),
               Expanded(
                 child: widget.onlineUsers.isEmpty

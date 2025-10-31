@@ -77,6 +77,8 @@ class _RootHomeScreenState extends State<RootHomeScreen> {
     udpDiscovery.dispose(); // Close the UDP socket
     // Make sure to dispose of your TCP listener if needed (add a stop function)
     // tcp_listener.stopListener(); // Example hypothetical function
+    serverSocket?.close(); // Close the TCP server socket
+    serverSocket = null;
     super.dispose();
   }
 

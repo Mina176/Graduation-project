@@ -8,13 +8,13 @@ import 'package:uuid/uuid.dart'; // For utf8 encoding
 // The port you agree on. Must be the same everywhere.
 const int port = 4444;
 final Uuid uuid = Uuid();
-ServerSocket? _serverSocket; // Keep a reference to it
+ServerSocket? serverSocket; // Keep a reference to it
 
 Future<void> startListener({
   required BuildContext context,
 }) async {
   // Prevent starting multiple listeners
-  if (_serverSocket != null) {
+  if (serverSocket != null) {
     sendSnackBar(
       message: 'listener is already running.',
       context: context,
@@ -24,14 +24,10 @@ Future<void> startListener({
 
   try {
     // Bind the server to all available network interfaces on the port
-    _serverSocket = await ServerSocket.bind(InternetAddress.anyIPv4, port);
+    serverSocket = await ServerSocket.bind(InternetAddress.anyIPv4, port);
 
-    sendSnackBar(
-      message: 'listener started on port $port.',
-      context: context,
-    );
     // Listen for incoming messages
-    _serverSocket!.listen((Socket client) {
+    serverSocket!.listen((Socket client) {
       client.listen((data) async {
         final receivedMessage = String.fromCharCodes(data);
         final messageModel = Message(
@@ -52,7 +48,7 @@ Future<void> startListener({
       message: ' Failed to start poke listener: $e',
       context: context,
     );
-    _serverSocket = null;
+    serverSocket = null;
   }
 }
 

@@ -92,5 +92,9 @@ class StorageHelper {
       return [];
     }
   }
+  
+  Future<void> clearData() async {
+    await _safePrefs.clear();
+  }
 }
 // add some print to know if the funtions is working
