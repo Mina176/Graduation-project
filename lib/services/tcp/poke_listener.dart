@@ -3,11 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:graduation_project/services/storage_helper/message_model.dart';
 import 'package:graduation_project/services/storage_helper/storage_helper.dart';
-import 'package:uuid/uuid.dart'; // For utf8 encoding
 
 // The port you agree on. Must be the same everywhere.
 const int port = 4444;
-final Uuid uuid = Uuid();
 ServerSocket? serverSocket; // Keep a reference to it
 
 Future<void> startListener({

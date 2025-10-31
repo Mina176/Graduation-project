@@ -25,7 +25,6 @@ class SendMessageSheet extends StatefulWidget {
 
 class _SendMessageSheetState extends State<SendMessageSheet> {
   TextEditingController messageContoller = TextEditingController();
-  var uuid = Uuid();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -78,18 +77,19 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
                         secretKey,
                         message,
                       );
+                      final messageModel = Message(
+                        id: Uuid().v4(),
+                        text: encryptedMessage,
+                      );
                       // the sent message i want it to appear to the another user
                       sendMessage(
                         context: context,
                         targetIp: widget.userIp,
                         // i want to use this in the listen function of the tcp
-                        message: Message(
-                          id: uuid.v4(),
-                          text: encryptedMessage,
-                        ),
+                        message: messageModel,
                       );
                       await StorageHelper().saveMessage(
-                        Message(id: uuid.v4(), text: messageContoller.text),
+                        messageModel,
                         type: MessageType.sent,
                       );
                       messageContoller.clear();
