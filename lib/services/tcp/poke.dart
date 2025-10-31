@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:flutter/material.dart';
 import 'package:graduation_project/services/storage_helper/message_model.dart';
 
 // Must use the same port
@@ -9,7 +7,6 @@ const int port = 4444;
 Future<void> sendMessage({
   required String targetIp,
   required Message message,
-  required BuildContext context,
 }) async {
   try {
     final

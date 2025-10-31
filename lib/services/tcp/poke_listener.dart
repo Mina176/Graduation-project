@@ -34,8 +34,6 @@ Future<void> startListener({
           messageModel,
           type: MessageType.received,
         );
-
-        sendSnackBar(message: receivedMessage, context: context);
       });
     });
   } catch (e) {

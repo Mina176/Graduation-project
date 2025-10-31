@@ -20,6 +20,11 @@ class GraduationProject extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+          inputDecorationTheme: InputDecorationTheme(
+        focusColor: Colors.blue,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      )),
       home: isLoggedIn ? RootHomeScreen() : LoginScreen(),
     );
   }

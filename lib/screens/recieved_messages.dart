@@ -43,19 +43,18 @@ class _MessagesListState extends State<MessagesList> {
             return Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasData) {
-            return ListView.builder(
+            return ListView.separated(
+              separatorBuilder: (context, index) => Divider(),
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
+                final message = snapshot.data![index];
                 return ListTile(
-                  title: Text(
-                    snapshot.data![index].id,
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
-                  ),
-                  subtitle: Text(
-                    snapshot.data![index].content,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  ),
-                );
+                    titleTextStyle: Theme.of(context).textTheme.titleLarge,
+                    subtitleTextStyle: Theme.of(context).textTheme.titleMedium,
+                    title: Text('file name:'),
+                    subtitle: Text(
+                      message.fileName,
+                    ));
               },
             );
           } else if (snapshot.hasError) {

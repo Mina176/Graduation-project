@@ -22,29 +22,25 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextField(
+              CustomTextField(
                 controller: nameController,
-                decoration: InputDecoration(
-                    hintText: 'Enter name',
-                    border: buildOutlineBorder(Colors.grey),
-                    focusedBorder: buildOutlineBorder(Colors.blue)),
+                hintText: 'Enter Name',
               ),
               SizedBox(
                 height: 8,
               ),
-              TextField(
-                controller: passwordContoller,
-                obscureText: true,
-                decoration: InputDecoration(
-                    hintText: 'Enter Password',
-                    border: buildOutlineBorder(Colors.grey),
-                    focusedBorder: buildOutlineBorder(Colors.blue)),
-              ),
+              CustomTextField(
+                  controller: passwordContoller,
+                  hintText: 'Enter Password',
+                  obscureText: true),
               SizedBox(height: 8),
               CustomBtn(
                 btnText: 'Login',
                 onTap: () {
-                  if (nameController.text.isEmpty || passwordContoller.text.isEmpty) return;
+                  if (nameController.text.isEmpty ||
+                      passwordContoller.text.isEmpty) {
+                    return;
+                  }
                   StorageHelper().saveName(nameController.text);
                   StorageHelper().savePassword(passwordContoller.text);
                   Navigator.pushReplacement(
@@ -63,12 +59,24 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-buildOutlineBorder(Color color) {
-  return OutlineInputBorder(
-    borderRadius: BorderRadius.circular(8),
-    borderSide: BorderSide(
-      width: 2,
-      color: color,
-    ),
-  );
+class CustomTextField extends StatelessWidget {
+  const CustomTextField({
+    super.key,
+    required this.controller,
+    this.obscureText = false,
+    required this.hintText,
+  });
+
+  final TextEditingController controller;
+  final bool obscureText;
+  final String hintText;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          hintText: hintText,
+        ));
+  }
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_project/screens/login_screen.dart';
+import 'package:graduation_project/screens/send_message.dart';
 import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 import 'package:graduation_project/widgets/custom_list_item.dart';
-import 'package:graduation_project/widgets/send_message_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -63,12 +63,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             name: userName,
                             localIpAddress: userIp,
                             onPressed: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return SendMessageSheet(
-                                      userIp: userIp, userName: userName);
-                                },
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => SendMessage(
+                                    userIp: userIp,
+                                  ),
+                                ),
                               );
                             },
                           );
