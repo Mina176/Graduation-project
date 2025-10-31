@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:graduation_project/screens/home_screen.dart';
+import 'package:graduation_project/screens/recieved_messages.dart';
 import 'package:graduation_project/services/tcp/poke_listener.dart';
 import 'package:graduation_project/services/udp/udp_discovery.dart';
-import 'package:graduation_project/storage_helper/storage_helper.dart';
+import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 
 class RootHomeScreen extends StatefulWidget {
   const RootHomeScreen({super.key});
@@ -79,10 +80,44 @@ class _RootHomeScreenState extends State<RootHomeScreen> {
     super.dispose();
   }
 
+  int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
-    return HomeScreen(
-      onlineUsers: onlineUsers,
+    return Scaffold(
+      bottomNavigationBar: NavigationBar(
+        destinations: const <Widget>[
+          NavigationDestination(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.send),
+            label: 'Sent',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.wifi),
+            label: 'Recieved',
+          ),
+        ],
+        onDestinationSelected: (int index) {
+          currentIndex = index;
+          setState(() {});
+        },
+        selectedIndex: currentIndex,
+      ),
+      body: <Widget>[
+        HomeScreen(
+          onlineUsers: onlineUsers,
+        ),
+        MessagesList(
+          key: Key('sent'),
+          type: MessageType.sent,
+        ),
+        MessagesList(
+          key: Key('received'),
+          type: MessageType.received,
+        ),
+      ][currentIndex],
     );
   }
 }

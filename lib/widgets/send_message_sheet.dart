@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:graduation_project/screens/login_screen.dart';
 import 'package:graduation_project/services/tcp/poke.dart';
 import 'package:graduation_project/services/tcp/poke_listener.dart';
+import 'package:graduation_project/services/storage_helper/message_model.dart';
+import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 import 'package:graduation_project/widgets/custom_btn.dart';
+import 'package:uuid/uuid.dart';
 
 class SendMessageSheet extends StatefulWidget {
   const SendMessageSheet({
@@ -13,14 +16,13 @@ class SendMessageSheet extends StatefulWidget {
 
   final String userIp;
   final String userName;
-
   @override
   State<SendMessageSheet> createState() => _SendMessageSheetState();
 }
 
 class _SendMessageSheetState extends State<SendMessageSheet> {
   TextEditingController messageContoller = TextEditingController();
-
+  var uuid = Uuid();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -54,16 +56,21 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
                 Expanded(
                   child: CustomBtn(
                     btnText: 'Send',
-                    onTap: () {
+                    onTap: () async {
                       if (messageContoller.text.isEmpty) {
                         return;
                       }
                       Navigator.of(context).pop();
+                      // the sent message i want it to appear to the another user
                       sendMessage(
                           context: context,
                           targetIp: widget.userIp,
-                          message: messageContoller.text // Use state variable
-                          );
+                          // i want to use this in the listen function of the tcp
+                          message: messageContoller.text);
+                      await StorageHelper().saveMessage(
+                        Message(id: uuid.v4(), text: messageContoller.text),
+                        type: MessageType.sent,
+                      );
                       messageContoller.clear();
                       sendSnackBar(
                           message:
@@ -73,6 +80,9 @@ class _SendMessageSheetState extends State<SendMessageSheet> {
                   ),
                 )
               ],
+            ),
+            SizedBox(
+              height: MediaQuery.viewInsetsOf(context).bottom,
             )
           ],
         ),

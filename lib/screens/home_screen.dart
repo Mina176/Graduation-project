@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:graduation_project/storage_helper/storage_helper.dart';
+import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 import 'package:graduation_project/widgets/custom_list_item.dart';
 import 'package:graduation_project/widgets/send_message_sheet.dart';
 
@@ -16,7 +16,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final userName = StorageHelper().loadName();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
