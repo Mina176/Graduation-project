@@ -1,13 +1,8 @@
 import 'dart:convert';
 import 'package:cryptography/cryptography.dart';
 import 'package:graduation_project/services/encryption_helper.dart';
-import 'package:graduation_project/services/storage_helper/message_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum MessageType {
-  sent,
-  received;
-}
 
 const passwordKey = 'user_password';
 
@@ -62,52 +57,52 @@ class StorageHelper {
   }
 
 // start from here:
-  Future<void> saveMessage(Message message, {required MessageType type}) async {
-    final messages = await loadMessages(type: type);
-    messages.add(message);
+  // Future<void> saveMessage(Message message) async {
+  //   final messages = await loadMessages();
+  //   messages.add(message);
 
-    // 1. Convert each Message to a Map using toJson()
-    final List<Map<String, dynamic>> messageMaps = messages.map((msg) {
-      return msg.toMap();
-    }).toList();
+  //   // 1. Convert each Message to a Map using toJson()
+  //   final List<Map<String, dynamic>> messageMaps = messages.map((msg) {
+  //     return msg.toMap();
+  //   }).toList();
 
-    // 2. Encode the List<Map> into a single JSON String
-    final String jsonString = jsonEncode(messageMaps);
+  //   // 2. Encode the List<Map> into a single JSON String
+  //   final String jsonString = jsonEncode(messageMaps);
 
-    // 3. Save the JSON String to SharedPreferences
-    await _safePrefs.setString(type.name, jsonString);
-    print(jsonString);
-  }
+  //   // 3. Save the JSON String to SharedPreferences
+  //   await _safePrefs.setString('messages', jsonString);
+  //   print(jsonString);
+  // }
 
   // --- Load List<Message> ---
-  Future<List<Message>> loadMessages({required MessageType type}) async {
-    await Future.delayed(Duration(seconds: 1));
-    print('hello');
+  // Future<List<Message>> loadMessages({required MessageType type}) async {
+  //   await Future.delayed(Duration(seconds: 1));
+  //   print('hello');
 
-    // 1. Get the JSON String from SharedPreferences
-    final String? jsonString = _safePrefs.getString(type.name);
+  //   // 1. Get the JSON String from SharedPreferences
+  //   final String? jsonString = _safePrefs.getString(type.name);
 
-    // If no data is stored, return an empty list
-    if (jsonString == null) {
-      return [];
-    }
+  //   // If no data is stored, return an empty list
+  //   if (jsonString == null) {
+  //     return [];
+  //   }
 
-    try {
-      // 2. Decode the JSON String into a List<dynamic>
-      final List<dynamic> jsonList = jsonDecode(jsonString);
+  //   try {
+  //     // 2. Decode the JSON String into a List<dynamic>
+  //     final List<dynamic> jsonList = jsonDecode(jsonString);
 
-      // 3. Convert the List<dynamic> (maps) back to List<Message>
-      final List<Message> messages = jsonList.map((jsonMap) {
-        return MessageMapper.fromMap(jsonMap);
-      }).toList();
+  //     // 3. Convert the List<dynamic> (maps) back to List<Message>
+  //     final List<Message> messages = jsonList.map((jsonMap) {
+  //       return MessageMapper.fromMap(jsonMap);
+  //     }).toList();
 
-      return messages;
-    } catch (e) {
-      // If decoding fails, return an empty list or handle the error
-      print('Error decoding messages: $e');
-      return [];
-    }
-  }
+  //     return messages;
+  //   } catch (e) {
+  //     // If decoding fails, return an empty list or handle the error
+  //     print('Error decoding messages: $e');
+  //     return [];
+  //   }
+  // }
 
   Future<void> clearData() async {
     await _safePrefs.clear();

@@ -1,12 +1,14 @@
+import 'dart:developer';
 import 'dart:io';
-import 'package:graduation_project/services/storage_helper/message_model.dart';
+
+import 'package:graduation_project/services/tcp/poke_listener.dart';
 
 // Must use the same port
 const int port = 4444;
 
-Future<void> sendMessage({
+Future<void> sendTcpMessage({
   required String targetIp,
-  required Message message,
+  required TcpMessage message,
 }) async {
   try {
     final
@@ -26,6 +28,7 @@ Future<void> sendMessage({
     // Wait for the data to be sent, then close the connection
     await socket.flush();
     socket.close();
+    log('Sent message to $targetIp:$port');
   } on SocketException catch (e) {
     // This happens if the connection times out or is refused
     // (e.g., user is offline or firewall is blocking)

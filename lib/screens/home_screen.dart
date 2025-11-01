@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graduation_project/screens/login_screen.dart';
-import 'package:graduation_project/screens/send_message.dart';
 import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 import 'package:graduation_project/services/udp/udp_discovery.dart';
 
@@ -17,7 +16,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final userName = StorageHelper().loadName();
   @override
   Widget build(BuildContext context) {
-    ref.watch(udpHelloSenderProvider);
     final state = ref.watch(userStreamProvider);
 
     return Scaffold(
@@ -64,30 +62,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             title: Text(user.user.name),
                             subtitle:
                                 Text('${user.ipAddress}\n${user.timestamp}'),
-                            trailing: GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => SendMessage(
-                                      userIp: user.ipAddress,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 24),
-                                decoration: BoxDecoration(
-                                  color: Colors.blueAccent,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  'Send',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16),
-                                ),
-                              ),
-                            ),
                           );
                         },
                       ),

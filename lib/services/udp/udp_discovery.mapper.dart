@@ -362,7 +362,8 @@ class UdpMessageMapper extends ClassMapperBase<UdpMessage> {
   static UdpMessageMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = UdpMessageMapper._());
-      DiscoveryMessageMapper.ensureInitialized();
+      UdpDiscoveryMessageMapper.ensureInitialized();
+      UdpFileMessageMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -407,13 +408,14 @@ abstract class UdpMessageCopyWith<$R, $In extends UdpMessage, $Out>
   UdpMessageCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
-class DiscoveryMessageMapper extends SubClassMapperBase<DiscoveryMessage> {
-  DiscoveryMessageMapper._();
+class UdpDiscoveryMessageMapper
+    extends SubClassMapperBase<UdpDiscoveryMessage> {
+  UdpDiscoveryMessageMapper._();
 
-  static DiscoveryMessageMapper? _instance;
-  static DiscoveryMessageMapper ensureInitialized() {
+  static UdpDiscoveryMessageMapper? _instance;
+  static UdpDiscoveryMessageMapper ensureInitialized() {
     if (_instance == null) {
-      MapperContainer.globals.use(_instance = DiscoveryMessageMapper._());
+      MapperContainer.globals.use(_instance = UdpDiscoveryMessageMapper._());
       UdpMessageMapper.ensureInitialized().addSubMapper(_instance!);
       UserModelMapper.ensureInitialized();
     }
@@ -421,17 +423,17 @@ class DiscoveryMessageMapper extends SubClassMapperBase<DiscoveryMessage> {
   }
 
   @override
-  final String id = 'DiscoveryMessage';
+  final String id = 'UdpDiscoveryMessage';
 
-  static UserModel _$user(DiscoveryMessage v) => v.user;
-  static const Field<DiscoveryMessage, UserModel> _f$user =
+  static UserModel _$user(UdpDiscoveryMessage v) => v.user;
+  static const Field<UdpDiscoveryMessage, UserModel> _f$user =
       Field('user', _$user);
-  static String _$type(DiscoveryMessage v) => v.type;
-  static const Field<DiscoveryMessage, String> _f$type =
+  static String _$type(UdpDiscoveryMessage v) => v.type;
+  static const Field<UdpDiscoveryMessage, String> _f$type =
       Field('type', _$type, opt: true, def: 'discovery');
 
   @override
-  final MappableFields<DiscoveryMessage> fields = const {
+  final MappableFields<UdpDiscoveryMessage> fields = const {
     #user: _f$user,
     #type: _f$type,
   };
@@ -443,80 +445,81 @@ class DiscoveryMessageMapper extends SubClassMapperBase<DiscoveryMessage> {
   @override
   late final ClassMapperBase superMapper = UdpMessageMapper.ensureInitialized();
 
-  static DiscoveryMessage _instantiate(DecodingData data) {
-    return DiscoveryMessage(user: data.dec(_f$user), type: data.dec(_f$type));
+  static UdpDiscoveryMessage _instantiate(DecodingData data) {
+    return UdpDiscoveryMessage(
+        user: data.dec(_f$user), type: data.dec(_f$type));
   }
 
   @override
   final Function instantiate = _instantiate;
 
-  static DiscoveryMessage fromMap(Map<String, dynamic> map) {
-    return ensureInitialized().decodeMap<DiscoveryMessage>(map);
+  static UdpDiscoveryMessage fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<UdpDiscoveryMessage>(map);
   }
 
-  static DiscoveryMessage fromJson(String json) {
-    return ensureInitialized().decodeJson<DiscoveryMessage>(json);
+  static UdpDiscoveryMessage fromJson(String json) {
+    return ensureInitialized().decodeJson<UdpDiscoveryMessage>(json);
   }
 }
 
-mixin DiscoveryMessageMappable {
+mixin UdpDiscoveryMessageMappable {
   String toJson() {
-    return DiscoveryMessageMapper.ensureInitialized()
-        .encodeJson<DiscoveryMessage>(this as DiscoveryMessage);
+    return UdpDiscoveryMessageMapper.ensureInitialized()
+        .encodeJson<UdpDiscoveryMessage>(this as UdpDiscoveryMessage);
   }
 
   Map<String, dynamic> toMap() {
-    return DiscoveryMessageMapper.ensureInitialized()
-        .encodeMap<DiscoveryMessage>(this as DiscoveryMessage);
+    return UdpDiscoveryMessageMapper.ensureInitialized()
+        .encodeMap<UdpDiscoveryMessage>(this as UdpDiscoveryMessage);
   }
 
-  DiscoveryMessageCopyWith<DiscoveryMessage, DiscoveryMessage, DiscoveryMessage>
-      get copyWith =>
-          _DiscoveryMessageCopyWithImpl<DiscoveryMessage, DiscoveryMessage>(
-              this as DiscoveryMessage, $identity, $identity);
+  UdpDiscoveryMessageCopyWith<UdpDiscoveryMessage, UdpDiscoveryMessage,
+      UdpDiscoveryMessage> get copyWith => _UdpDiscoveryMessageCopyWithImpl<
+          UdpDiscoveryMessage, UdpDiscoveryMessage>(
+      this as UdpDiscoveryMessage, $identity, $identity);
   @override
   String toString() {
-    return DiscoveryMessageMapper.ensureInitialized()
-        .stringifyValue(this as DiscoveryMessage);
+    return UdpDiscoveryMessageMapper.ensureInitialized()
+        .stringifyValue(this as UdpDiscoveryMessage);
   }
 
   @override
   bool operator ==(Object other) {
-    return DiscoveryMessageMapper.ensureInitialized()
-        .equalsValue(this as DiscoveryMessage, other);
+    return UdpDiscoveryMessageMapper.ensureInitialized()
+        .equalsValue(this as UdpDiscoveryMessage, other);
   }
 
   @override
   int get hashCode {
-    return DiscoveryMessageMapper.ensureInitialized()
-        .hashValue(this as DiscoveryMessage);
+    return UdpDiscoveryMessageMapper.ensureInitialized()
+        .hashValue(this as UdpDiscoveryMessage);
   }
 }
 
-extension DiscoveryMessageValueCopy<$R, $Out>
-    on ObjectCopyWith<$R, DiscoveryMessage, $Out> {
-  DiscoveryMessageCopyWith<$R, DiscoveryMessage, $Out>
-      get $asDiscoveryMessage => $base
-          .as((v, t, t2) => _DiscoveryMessageCopyWithImpl<$R, $Out>(v, t, t2));
+extension UdpDiscoveryMessageValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, UdpDiscoveryMessage, $Out> {
+  UdpDiscoveryMessageCopyWith<$R, UdpDiscoveryMessage, $Out>
+      get $asUdpDiscoveryMessage => $base.as(
+          (v, t, t2) => _UdpDiscoveryMessageCopyWithImpl<$R, $Out>(v, t, t2));
 }
 
-abstract class DiscoveryMessageCopyWith<$R, $In extends DiscoveryMessage, $Out>
-    implements UdpMessageCopyWith<$R, $In, $Out> {
+abstract class UdpDiscoveryMessageCopyWith<$R, $In extends UdpDiscoveryMessage,
+    $Out> implements UdpMessageCopyWith<$R, $In, $Out> {
   UserModelCopyWith<$R, UserModel, UserModel> get user;
   @override
   $R call({UserModel? user, String? type});
-  DiscoveryMessageCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+  UdpDiscoveryMessageCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
       Then<$Out2, $R2> t);
 }
 
-class _DiscoveryMessageCopyWithImpl<$R, $Out>
-    extends ClassCopyWithBase<$R, DiscoveryMessage, $Out>
-    implements DiscoveryMessageCopyWith<$R, DiscoveryMessage, $Out> {
-  _DiscoveryMessageCopyWithImpl(super.value, super.then, super.then2);
+class _UdpDiscoveryMessageCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, UdpDiscoveryMessage, $Out>
+    implements UdpDiscoveryMessageCopyWith<$R, UdpDiscoveryMessage, $Out> {
+  _UdpDiscoveryMessageCopyWithImpl(super.value, super.then, super.then2);
 
   @override
-  late final ClassMapperBase<DiscoveryMessage> $mapper =
-      DiscoveryMessageMapper.ensureInitialized();
+  late final ClassMapperBase<UdpDiscoveryMessage> $mapper =
+      UdpDiscoveryMessageMapper.ensureInitialized();
   @override
   UserModelCopyWith<$R, UserModel, UserModel> get user =>
       $value.user.copyWith.$chain((v) => call(user: v));
@@ -524,12 +527,139 @@ class _DiscoveryMessageCopyWithImpl<$R, $Out>
   $R call({UserModel? user, String? type}) => $apply(FieldCopyWithData(
       {if (user != null) #user: user, if (type != null) #type: type}));
   @override
-  DiscoveryMessage $make(CopyWithData data) => DiscoveryMessage(
+  UdpDiscoveryMessage $make(CopyWithData data) => UdpDiscoveryMessage(
       user: data.get(#user, or: $value.user),
       type: data.get(#type, or: $value.type));
 
   @override
-  DiscoveryMessageCopyWith<$R2, DiscoveryMessage, $Out2> $chain<$R2, $Out2>(
+  UdpDiscoveryMessageCopyWith<$R2, UdpDiscoveryMessage, $Out2>
+      $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+          _UdpDiscoveryMessageCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class UdpFileMessageMapper extends SubClassMapperBase<UdpFileMessage> {
+  UdpFileMessageMapper._();
+
+  static UdpFileMessageMapper? _instance;
+  static UdpFileMessageMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = UdpFileMessageMapper._());
+      UdpMessageMapper.ensureInitialized().addSubMapper(_instance!);
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'UdpFileMessage';
+
+  static List<String> _$fileIds(UdpFileMessage v) => v.fileIds;
+  static const Field<UdpFileMessage, List<String>> _f$fileIds =
+      Field('fileIds', _$fileIds);
+  static String _$type(UdpFileMessage v) => v.type;
+  static const Field<UdpFileMessage, String> _f$type =
+      Field('type', _$type, opt: true, def: 'file');
+
+  @override
+  final MappableFields<UdpFileMessage> fields = const {
+    #fileIds: _f$fileIds,
+    #type: _f$type,
+  };
+
+  @override
+  final String discriminatorKey = 'type';
+  @override
+  final dynamic discriminatorValue = 'file';
+  @override
+  late final ClassMapperBase superMapper = UdpMessageMapper.ensureInitialized();
+
+  static UdpFileMessage _instantiate(DecodingData data) {
+    return UdpFileMessage(
+        fileIds: data.dec(_f$fileIds), type: data.dec(_f$type));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static UdpFileMessage fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<UdpFileMessage>(map);
+  }
+
+  static UdpFileMessage fromJson(String json) {
+    return ensureInitialized().decodeJson<UdpFileMessage>(json);
+  }
+}
+
+mixin UdpFileMessageMappable {
+  String toJson() {
+    return UdpFileMessageMapper.ensureInitialized()
+        .encodeJson<UdpFileMessage>(this as UdpFileMessage);
+  }
+
+  Map<String, dynamic> toMap() {
+    return UdpFileMessageMapper.ensureInitialized()
+        .encodeMap<UdpFileMessage>(this as UdpFileMessage);
+  }
+
+  UdpFileMessageCopyWith<UdpFileMessage, UdpFileMessage, UdpFileMessage>
+      get copyWith =>
+          _UdpFileMessageCopyWithImpl<UdpFileMessage, UdpFileMessage>(
+              this as UdpFileMessage, $identity, $identity);
+  @override
+  String toString() {
+    return UdpFileMessageMapper.ensureInitialized()
+        .stringifyValue(this as UdpFileMessage);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return UdpFileMessageMapper.ensureInitialized()
+        .equalsValue(this as UdpFileMessage, other);
+  }
+
+  @override
+  int get hashCode {
+    return UdpFileMessageMapper.ensureInitialized()
+        .hashValue(this as UdpFileMessage);
+  }
+}
+
+extension UdpFileMessageValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, UdpFileMessage, $Out> {
+  UdpFileMessageCopyWith<$R, UdpFileMessage, $Out> get $asUdpFileMessage =>
+      $base.as((v, t, t2) => _UdpFileMessageCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class UdpFileMessageCopyWith<$R, $In extends UdpFileMessage, $Out>
+    implements UdpMessageCopyWith<$R, $In, $Out> {
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get fileIds;
+  @override
+  $R call({List<String>? fileIds, String? type});
+  UdpFileMessageCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
+}
+
+class _UdpFileMessageCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, UdpFileMessage, $Out>
+    implements UdpFileMessageCopyWith<$R, UdpFileMessage, $Out> {
+  _UdpFileMessageCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<UdpFileMessage> $mapper =
+      UdpFileMessageMapper.ensureInitialized();
+  @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get fileIds =>
+      ListCopyWith($value.fileIds, (v, t) => ObjectCopyWith(v, $identity, t),
+          (v) => call(fileIds: v));
+  @override
+  $R call({List<String>? fileIds, String? type}) => $apply(FieldCopyWithData(
+      {if (fileIds != null) #fileIds: fileIds, if (type != null) #type: type}));
+  @override
+  UdpFileMessage $make(CopyWithData data) => UdpFileMessage(
+      fileIds: data.get(#fileIds, or: $value.fileIds),
+      type: data.get(#type, or: $value.type));
+
+  @override
+  UdpFileMessageCopyWith<$R2, UdpFileMessage, $Out2> $chain<$R2, $Out2>(
           Then<$Out2, $R2> t) =>
-      _DiscoveryMessageCopyWithImpl<$R2, $Out2>($value, $cast, t);
+      _UdpFileMessageCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }

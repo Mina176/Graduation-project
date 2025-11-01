@@ -25,14 +25,14 @@ final serverSocketProvider = AutoDisposeFutureProvider<ServerSocket?>.internal(
 // ignore: unused_element
 typedef ServerSocketRef = AutoDisposeFutureProviderRef<ServerSocket?>;
 String _$serverSocketStreamHash() =>
-    r'c06bbad2178495ab9cbe6e9b9c004f1e8f3e567d';
+    r'094ab6e1c4e972f2d29657e1f580f17e23ad04a8';
 
 /// Stream provider that continuously listens for incoming TCP connections
 ///
 /// Copied from [serverSocketStream].
 @ProviderFor(serverSocketStream)
 final serverSocketStreamProvider =
-    AutoDisposeStreamProvider<TcpMessage>.internal(
+    AutoDisposeStreamProvider<TcpMessageWrapper>.internal(
   serverSocketStream,
   name: r'serverSocketStreamProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -44,24 +44,24 @@ final serverSocketStreamProvider =
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef ServerSocketStreamRef = AutoDisposeStreamProviderRef<TcpMessage>;
-String _$saveMessageToDatabaseHash() =>
-    r'1f0d62cbd33172f869a7edb9f57d020f44bd578c';
+typedef ServerSocketStreamRef = AutoDisposeStreamProviderRef<TcpMessageWrapper>;
+String _$receiveMessageContentHash() =>
+    r'e8f1d5e0af80712189b7e3661c080172d5f6718c';
 
-/// See also [saveMessageToDatabase].
-@ProviderFor(saveMessageToDatabase)
-final saveMessageToDatabaseProvider = AutoDisposeFutureProvider<void>.internal(
-  saveMessageToDatabase,
-  name: r'saveMessageToDatabaseProvider',
+/// See also [receiveMessageContent].
+@ProviderFor(receiveMessageContent)
+final receiveMessageContentProvider = AutoDisposeProvider<void>.internal(
+  receiveMessageContent,
+  name: r'receiveMessageContentProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$saveMessageToDatabaseHash,
+      : _$receiveMessageContentHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef SaveMessageToDatabaseRef = AutoDisposeFutureProviderRef<void>;
+typedef ReceiveMessageContentRef = AutoDisposeProviderRef<void>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

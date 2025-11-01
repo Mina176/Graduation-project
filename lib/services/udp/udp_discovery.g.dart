@@ -43,7 +43,25 @@ final udpDataStreamProvider = AutoDisposeStreamProvider<Datagram>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UdpDataStreamRef = AutoDisposeStreamProviderRef<Datagram>;
-String _$userStreamHash() => r'b6fa49521a306d9844c04034473163b81f49f981';
+String _$listenForUdpFileMessagesHash() =>
+    r'c9e9d24520ceca16733de9b32fb380384b70b12c';
+
+/// See also [listenForUdpFileMessages].
+@ProviderFor(listenForUdpFileMessages)
+final listenForUdpFileMessagesProvider = AutoDisposeProvider<void>.internal(
+  listenForUdpFileMessages,
+  name: r'listenForUdpFileMessagesProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$listenForUdpFileMessagesHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ListenForUdpFileMessagesRef = AutoDisposeProviderRef<void>;
+String _$userStreamHash() => r'28880f5abbd88736a35e4af63b6bb5ba870cfc80';
 
 /// See also [UserStream].
 @ProviderFor(UserStream)
@@ -58,7 +76,7 @@ final userStreamProvider =
 );
 
 typedef _$UserStream = AutoDisposeNotifier<UserStreamState>;
-String _$udpHelloSenderHash() => r'df71ee3e79471b452ff08f964142f9883a826704';
+String _$udpHelloSenderHash() => r'285feb573953c5aa0a5c1c98c4c575eaeb5df973';
 
 /// Provider that sends hello messages via UDP every second
 ///

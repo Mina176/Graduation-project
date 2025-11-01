@@ -2,11 +2,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dart_mappable/dart_mappable.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:graduation_project/services/storage_helper/message_model.dart';
-import 'package:graduation_project/services/storage_helper/storage_helper.dart';
+import 'package:graduation_project/screens/files_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'poke_listener.g.dart';
@@ -36,16 +34,35 @@ Future<ServerSocket?> serverSocket(Ref ref) async {
   }
 }
 
+@MappableClass(
+  discriminatorKey: 'type',
+)
+sealed class TcpMessage with TcpFileMessageMappable {
+  const TcpMessage({required this.type});
+  final String type;
+}
+
+@MappableClass(discriminatorValue: 'file')
+class TcpFileMessage extends TcpMessage with TcpFileMessageMappable {
+  final String fileId;
+  final String content;
+  const TcpFileMessage({
+    required this.fileId,
+    required this.content,
+    super.type = 'file',
+  });
+}
+
 @MappableClass()
-class TcpMessage with TcpMessageMappable {
+class TcpMessageWrapper with TcpMessageWrapperMappable {
   final String ipAddress;
-  final Message message;
-  const TcpMessage({required this.ipAddress, required this.message});
+  final TcpMessage message;
+  const TcpMessageWrapper({required this.ipAddress, required this.message});
 }
 
 /// Stream provider that continuously listens for incoming TCP connections
 @riverpod
-Stream<TcpMessage> serverSocketStream(Ref ref) async* {
+Stream<TcpMessageWrapper> serverSocketStream(Ref ref) async* {
   final server = await ref.watch(serverSocketProvider.future);
   if (server == null) {
     return;
@@ -57,24 +74,39 @@ Stream<TcpMessage> serverSocketStream(Ref ref) async* {
   await for (final socket in server) {
     final dataIntList = await socket.first;
     final dataJson = utf8.decode(dataIntList);
-    final dataObject = MessageMapper.fromJson(dataJson);
-    final message = TcpMessage(
-        ipAddress: socket.remoteAddress.address, message: dataObject);
+    final dataObject = TcpMessageMapper.fromJson(dataJson);
+    final message = TcpMessageWrapper(
+      ipAddress: socket.remoteAddress.address,
+      message: dataObject,
+    );
     yield message;
     socket.destroy();
     socket.close();
   }
 }
 
-//Save message to database provider
 @riverpod
-Future<void> saveMessageToDatabase(Ref ref) async {
+void receiveMessageContent(Ref ref) {
   ref.listen(serverSocketStreamProvider, (previous, next) {
     final message = next.value;
     if (message == null) return;
-    StorageHelper().saveMessage(message.message, type: MessageType.received);
+    if (message.message case TcpFileMessage(:final fileId, :final content)) {
+      ref
+          .read(filesProviderProvider.notifier)
+          .downloadContent(fileId: fileId, content: content);
+    }
   });
 }
+
+// //Save message to database provider
+// @riverpod
+// Future<void> saveMessageToDatabase(Ref ref) async {
+//   ref.listen(serverSocketStreamProvider, (previous, next) {
+//     final message = next.value;
+//     if (message == null) return;
+//     // StorageHelper().saveMessage(message.message, type: MessageType.received);
+//   });
+// }
 
 void sendSnackBar({required String message, required BuildContext context}) {
   final snackBar = SnackBar(

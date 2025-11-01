@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:graduation_project/screens/files_screen.dart';
 import 'package:graduation_project/screens/home_screen.dart';
-import 'package:graduation_project/screens/recieved_messages.dart';
-import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 import 'package:graduation_project/services/tcp/poke_listener.dart';
+import 'package:graduation_project/services/udp/udp_discovery.dart';
 
 class RootHomeScreen extends ConsumerStatefulWidget {
   const RootHomeScreen({super.key});
@@ -17,13 +17,16 @@ class _RootHomeScreenState extends ConsumerState<RootHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(serverSocketStreamProvider, (previous, next) {
-      final message = next.value;
-      if (message == null) return;
-      sendSnackBar(message: message.message.content, context: context);
-    });
-    ref.watch(saveMessageToDatabaseProvider);
-
+    // ref.listen(serverSocketStreamProvider, (previous, next) {
+    //   final message = next.value;
+    //   if (message == null) return;
+    //   sendSnackBar(message: message.message.content, context: context);
+    // });
+    // ref.watch(saveMessageToDatabaseProvider);
+    ref.watch(udpHelloSenderProvider);
+    ref.watch(listenForUdpFileMessagesProvider);
+    ref.watch(filesProviderProvider);
+    ref.watch(receiveMessageContentProvider);
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         destinations: const <Widget>[
@@ -46,17 +49,7 @@ class _RootHomeScreenState extends ConsumerState<RootHomeScreen> {
         },
         selectedIndex: currentIndex,
       ),
-      body: <Widget>[
-        HomeScreen(),
-        MessagesList(
-          key: Key('sent'),
-          type: MessageType.sent,
-        ),
-        MessagesList(
-          key: Key('received'),
-          type: MessageType.received,
-        ),
-      ][currentIndex],
+      body: <Widget>[HomeScreen(), FilesScreen(), SizedBox()][currentIndex],
     );
   }
 }
