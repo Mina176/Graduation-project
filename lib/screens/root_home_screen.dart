@@ -4,7 +4,6 @@ import 'package:graduation_project/screens/home_screen.dart';
 import 'package:graduation_project/screens/recieved_messages.dart';
 import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 import 'package:graduation_project/services/tcp/poke_listener.dart';
-import 'package:graduation_project/services/udp/udp_discovery.dart';
 
 class RootHomeScreen extends ConsumerStatefulWidget {
   const RootHomeScreen({super.key});
@@ -14,23 +13,17 @@ class RootHomeScreen extends ConsumerStatefulWidget {
 }
 
 class _RootHomeScreenState extends ConsumerState<RootHomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    startListener(context: context);
-  }
-
-  @override
-  void dispose() {
-    serverSocket?.close();
-    serverSocket = null;
-    super.dispose();
-  }
-
   int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(serverSocketStreamProvider, (previous, next) {
+      final message = next.value;
+      if (message == null) return;
+      sendSnackBar(message: message.message.content, context: context);
+    });
+    ref.watch(saveMessageToDatabaseProvider);
+
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         destinations: const <Widget>[

@@ -43,7 +43,7 @@ final udpDataStreamProvider = AutoDisposeStreamProvider<Datagram>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UdpDataStreamRef = AutoDisposeStreamProviderRef<Datagram>;
-String _$userStreamHash() => r'03199fc005f0410ace29c7fedc338941c6ed780b';
+String _$userStreamHash() => r'b6fa49521a306d9844c04034473163b81f49f981';
 
 /// See also [UserStream].
 @ProviderFor(UserStream)

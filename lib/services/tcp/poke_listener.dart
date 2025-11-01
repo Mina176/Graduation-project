@@ -1,48 +1,79 @@
 // ignore_for_file: use_build_context_synchronously
+import 'dart:convert';
 import 'dart:io';
+import 'package:dart_mappable/dart_mappable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graduation_project/services/storage_helper/message_model.dart';
 import 'package:graduation_project/services/storage_helper/storage_helper.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-// The port you agree on. Must be the same everywhere.
-const int port = 4444;
-ServerSocket? serverSocket; // Keep a reference to it
+part 'poke_listener.g.dart';
+part 'poke_listener.mapper.dart';
 
-Future<void> startListener({
-  required BuildContext context,
-}) async {
-  // Prevent starting multiple listeners
-  if (serverSocket != null) {
-    sendSnackBar(
-      message: 'listener is already running.',
-      context: context,
+// The port to listen on for TCP connections
+const int tcpPort = 4444;
+
+/// Provider that creates and binds a TCP server socket on the specified port
+@riverpod
+Future<ServerSocket?> serverSocket(Ref ref) async {
+  try {
+    final server = await ServerSocket.bind(
+      InternetAddress.anyIPv4,
+      tcpPort,
     );
+
+    // Close the server socket when the provider is disposed
+    ref.onDispose(() {
+      server.close();
+    });
+
+    return server;
+  } catch (e) {
+    debugPrint('Error binding TCP server socket: $e');
+    return null;
+  }
+}
+
+@MappableClass()
+class TcpMessage with TcpMessageMappable {
+  final String ipAddress;
+  final Message message;
+  const TcpMessage({required this.ipAddress, required this.message});
+}
+
+/// Stream provider that continuously listens for incoming TCP connections
+@riverpod
+Stream<TcpMessage> serverSocketStream(Ref ref) async* {
+  final server = await ref.watch(serverSocketProvider.future);
+  if (server == null) {
     return;
   }
+  ref.onDispose(() {
+    server.close();
+  });
 
-  try {
-    // Bind the server to all available network interfaces on the port
-    serverSocket = await ServerSocket.bind(InternetAddress.anyIPv4, port);
-
-    // Listen for incoming messages
-    serverSocket!.listen((Socket client) {
-      client.listen((data) async {
-        final receivedMessage = String.fromCharCodes(data);
-        final messageModel = Message.fromJson(receivedMessage);
-
-        await StorageHelper().saveMessage(
-          messageModel,
-          type: MessageType.received,
-        );
-      });
-    });
-  } catch (e) {
-    sendSnackBar(
-      message: ' Failed to start poke listener: $e',
-      context: context,
-    );
-    serverSocket = null;
+  await for (final socket in server) {
+    final dataIntList = await socket.first;
+    final dataJson = utf8.decode(dataIntList);
+    final dataObject = MessageMapper.fromJson(dataJson);
+    final message = TcpMessage(
+        ipAddress: socket.remoteAddress.address, message: dataObject);
+    yield message;
+    socket.destroy();
+    socket.close();
   }
+}
+
+//Save message to database provider
+@riverpod
+Future<void> saveMessageToDatabase(Ref ref) async {
+  ref.listen(serverSocketStreamProvider, (previous, next) {
+    final message = next.value;
+    if (message == null) return;
+    StorageHelper().saveMessage(message.message, type: MessageType.received);
+  });
 }
 
 void sendSnackBar({required String message, required BuildContext context}) {

@@ -98,7 +98,7 @@ class StorageHelper {
 
       // 3. Convert the List<dynamic> (maps) back to List<Message>
       final List<Message> messages = jsonList.map((jsonMap) {
-        return Message.fromMap(jsonMap);
+        return MessageMapper.fromMap(jsonMap);
       }).toList();
 
       return messages;
