@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/screens/login_screen.dart';
+import 'package:graduation_project/screens/info_screen.dart';
 import 'package:graduation_project/screens/send_message.dart';
 import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 import 'package:graduation_project/widgets/custom_list_item.dart';
@@ -26,12 +26,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-              icon: Icon(Icons.logout),
-              onPressed: () async {
-                await StorageHelper().clearData();
-                Navigator.of(context).pushReplacement(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+                Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => LoginScreen(),
+                    builder: (context) => InfoScreen(
+                      username: userName,
+                    ),
                   ),
                 );
               })

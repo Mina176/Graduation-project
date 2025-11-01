@@ -21,9 +21,6 @@ class StorageHelper {
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
   }
-  
-  
-
 
   bool get isLoggedIn {
     return _safePrefs.containsKey(passwordKey);
@@ -42,6 +39,12 @@ class StorageHelper {
     final decodedKey = base64Decode(passwordBase64String);
     final key = SecretKey(decodedKey);
     return key;
+  }
+
+  String? loadPasswordBase64() {
+    final passwordBase64String = _safePrefs.getString(passwordKey);
+    if (passwordBase64String == null) throw '';
+    return passwordBase64String;
   }
 
   /// Throws an error if init() hasn't been called.
