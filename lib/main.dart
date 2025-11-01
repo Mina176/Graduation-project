@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graduation_project/screens/login_screen.dart';
 import 'package:graduation_project/screens/root_home_screen.dart';
 import 'package:graduation_project/services/storage_helper/storage_helper.dart';
@@ -9,7 +10,11 @@ void main() async {
   await StorageHelper().init();
   requestDevicePermissions();
   final isLoggedIn = StorageHelper().isLoggedIn;
-  runApp(GraduationProject(isLoggedIn: isLoggedIn));
+  runApp(
+    ProviderScope(
+      child: GraduationProject(isLoggedIn: isLoggedIn),
+    ),
+  );
 }
 
 class GraduationProject extends StatelessWidget {

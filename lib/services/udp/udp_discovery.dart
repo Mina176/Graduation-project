@@ -1,87 +1,155 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:network_info_plus/network_info_plus.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 
-class UdpDiscovery {
-  final int port = 4444;
-  String? localIpAddress;
-  late RawDatagramSocket _socket;
-  final Map<String, DateTime> onlineUsers = {};
-  final StreamController<Map<String, String>> _userStreamController =
-      StreamController.broadcast();
+part 'udp_discovery.g.dart';
 
-  // Expose the stream for your UI to listen to
-  Stream<Map<String, String>> get userStream => _userStreamController.stream;
+// The port to listen on for UDP data
+const int udpPort = 4444;
 
-  Future<String> getIpAddress() async {
-    List<NetworkInterface> interfaces = await NetworkInterface.list(
-      type: InternetAddressType.IPv4,
-      includeLoopback: false,
-    );
+/// Provider that creates and binds a UDP socket on the specified port
+@riverpod
+Future<RawDatagramSocket> udpSocket(Ref ref) async {
+  final socket = await RawDatagramSocket.bind(
+    InternetAddress.anyIPv4,
+    udpPort,
+  );
 
-    for (var interface in interfaces) {
-      for (var address in interface.addresses) {
-        print(address.address.toString());
-        localIpAddress = address.address;
-        return localIpAddress!;
+  // Close the socket when the provider is disposed
+  ref.onDispose(() {
+    socket.close();
+  });
+
+  return socket;
+}
+
+/// Stream provider that continuously reads UDP data from the socket
+@riverpod
+Stream<Datagram> udpDataStream(Ref ref) async* {
+  final socket = await ref.watch(udpSocketProvider.future);
+  await for (final event in socket) {
+    if (event == RawSocketEvent.read) {
+      final datagram = socket.receive();
+      if (datagram != null && datagram.data.isNotEmpty) {
+        yield datagram;
       }
     }
-    throw Exception('No ipv4 address found');
   }
+}
 
-  // 1. Initialize and bind the socket once
-  Future<void> initializeDiscovery() async {
-    localIpAddress = await getIpAddress();
-    _socket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, port);
-    _socket.broadcastEnabled = true;
-    print('UDPDiscovery socket initialized on port $port');
-    listenForUsers(); // Start listening immediately
+//get current ip address
+Future<String?> getCurrentIpAddress() {
+  return NetworkInfo().getWifiIP();
+}
+
+@riverpod
+class UserStream extends _$UserStream {
+  @override
+  Set<UserModelWrapper> build() {
+    ref.listen(udpDataStreamProvider, (previous, next) async {
+      final datagram = next.value;
+      if (datagram == null) return;
+      final senderIpAddress = datagram.address.address;
+      final localIpAddress = await getCurrentIpAddress();
+      if (senderIpAddress == localIpAddress) return;
+      final data = datagram.data;
+      final message = utf8.decode(data);
+      final parts = message.split('|');
+      if (parts.length == 2 && parts[0] == 'Hello') {
+        final String senderName = parts[1];
+        final user = UserModel(name: senderName);
+        final timestamp = DateTime.now();
+        final userWrapper = UserModelWrapper(
+          ipAddress: senderIpAddress,
+          user: user,
+          timestamp: timestamp,
+        );
+        state = {
+          ...state,
+          userWrapper,
+        };
+      }
+    });
+    return {};
   }
+}
 
-  // 2. Start sending periodic broadcasts
-  void startSending(String userName) {
-    Timer.periodic(const Duration(seconds: 5), (timer) {
-      // No need to send the IP, the packet header has it
-      final Uint8List message = utf8.encode('Hello|$userName');
-      _socket.send(message, InternetAddress('255.255.255.255'), port);
+class UserModelWrapper {
+  final String ipAddress;
+  final UserModel user;
+  final DateTime timestamp;
+
+  const UserModelWrapper({
+    required this.ipAddress,
+    required this.user,
+    required this.timestamp,
+  });
+}
+
+class UserModel {
+  final String name;
+
+  const UserModel({required this.name});
+}
+
+/// Provider that gets the current user's name
+@riverpod
+String userName(Ref ref) {
+  return StorageHelper().loadName();
+}
+
+/// Provider that sends hello messages via UDP every second
+@riverpod
+class UdpHelloSender extends _$UdpHelloSender {
+  Timer? _timer;
+
+  @override
+  void build() {
+    // Start sending hello messages
+    _startSending();
+
+    // Clean up timer when provider is disposed
+    ref.onDispose(() {
+      _timer?.cancel();
+      _timer = null;
     });
   }
 
-  void listenForUsers() {
-    print('Listening for users...');
-    _socket.listen((RawSocketEvent event) {
-      if (event == RawSocketEvent.read) {
-        final Datagram? datagram = _socket.receive();
-        if (datagram == null) return;
+  void _startSending() async {
+    final socket = await ref.read(udpSocketProvider.future);
+    final userName = ref.read(userNameProvider);
 
-        // Get the sender's IP from the datagram packet
-        final String senderIp = datagram.address.address;
+    // Enable broadcast mode on the socket
+    socket.broadcastEnabled = true;
 
-        // Filter out our own messages
-        if (senderIp == localIpAddress) {
-          return;
-        }
+    // Create the hello message in the format "Hello|username"
+    final message = utf8.encode('Hello|$userName');
 
-        final message = utf8.decode(datagram.data);
-        final parts = message.split('|'); // e.g., ['Hello', 'UserName']
-        if (parts.length == 2 && parts[0] == 'Hello') {
-          final String senderName = parts[1];
-          final Map<String, String> userInfo = {senderIp: senderName};
+    // Broadcast address - sends to all devices on the network
+    final broadcastAddress = InternetAddress('255.255.255.255');
 
-          // Add to our stream for the UI
-          _userStreamController.add(userInfo);
-
-          // You can also update your onlineUsers map here
-          onlineUsers[senderIp] = DateTime.now();
-        }
+    // Send hello message every second
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      try {
+        socket.send(message, broadcastAddress, udpPort);
+      } catch (e) {
+        // Handle any errors silently or log them if needed
+        debugPrint('Error sending UDP hello message: $e');
       }
     });
   }
+}
 
-  // Call this when you're done
-  void dispose() {
-    _socket.close();
-    _userStreamController.close();
-  }
+/// Data class representing received UDP data
+class UdpData {
+  final Uint8List data;
+
+  const UdpData({
+    required this.data,
+  });
 }
