@@ -4,7 +4,6 @@ import 'package:graduation_project/screens/login_screen.dart';
 import 'package:graduation_project/screens/send_message.dart';
 import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 import 'package:graduation_project/services/udp/udp_discovery.dart';
-import 'package:graduation_project/widgets/custom_list_item.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({
@@ -19,7 +18,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     ref.watch(udpHelloSenderProvider);
-    final users = ref.watch(userStreamProvider);
+    final state = ref.watch(userStreamProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -49,28 +48,46 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               // CustomAppBar(userName: userName),
               SizedBox(height: 8),
               Expanded(
-                child: users.isEmpty
+                child: state.users.isEmpty
                     ? Center(
                         child: Text("Searching for users...",
                             style: TextStyle(color: Colors.grey)))
                     : ListView.separated(
-                        itemCount: users.length,
+                        itemCount: state.users.length,
                         separatorBuilder: (BuildContext context, int index) =>
                             Divider(),
                         itemBuilder: (context, index) {
-                          final user = users.elementAt(index);
-                          return CustomListTile(
-                            name: user.user.name,
-                            localIpAddress: '1.1.1.1',
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => SendMessage(
-                                    userIp: '1.1.1.1',
+                          final user = state.users.elementAt(index);
+                          return ListTile(
+                            iconColor: Colors.green,
+                            leading: const Icon(Icons.devices),
+                            title: Text(user.user.name),
+                            subtitle:
+                                Text('${user.ipAddress}\n${user.timestamp}'),
+                            trailing: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => SendMessage(
+                                      userIp: user.ipAddress,
+                                    ),
                                   ),
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 24),
+                                decoration: BoxDecoration(
+                                  color: Colors.blueAccent,
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                              );
-                            },
+                                child: Text(
+                                  'Send',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 16),
+                                ),
+                              ),
+                            ),
                           );
                         },
                       ),

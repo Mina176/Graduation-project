@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:dart_mappable/dart_mappable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -8,6 +9,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 
 part 'udp_discovery.g.dart';
+part 'udp_discovery.mapper.dart';
 
 // The port to listen on for UDP data
 const int udpPort = 4444;
@@ -47,10 +49,17 @@ Future<String?> getCurrentIpAddress() {
   return NetworkInfo().getWifiIP();
 }
 
+@MappableClass()
+class UserStreamState with UserStreamStateMappable {
+  final Set<UserModelWrapper> users;
+  final DateTime lastUpdated;
+  UserStreamState({required this.users, required this.lastUpdated});
+}
+
 @riverpod
 class UserStream extends _$UserStream {
   @override
-  Set<UserModelWrapper> build() {
+  UserStreamState build() {
     ref.listen(udpDataStreamProvider, (previous, next) async {
       final datagram = next.value;
       if (datagram == null) return;
@@ -59,27 +68,32 @@ class UserStream extends _$UserStream {
       if (senderIpAddress == localIpAddress) return;
       final data = datagram.data;
       final message = utf8.decode(data);
-      final parts = message.split('|');
-      if (parts.length == 2 && parts[0] == 'Hello') {
-        final String senderName = parts[1];
-        final user = UserModel(name: senderName);
+      final messageObject = UdpMessageMapper.fromJson(message);
+      if (messageObject is DiscoveryMessage) {
+        final user = messageObject.user;
         final timestamp = DateTime.now();
         final userWrapper = UserModelWrapper(
           ipAddress: senderIpAddress,
           user: user,
           timestamp: timestamp,
         );
-        state = {
-          ...state,
-          userWrapper,
-        };
+        final newUsers = state.users;
+        if (newUsers.contains(userWrapper)) {
+          newUsers.remove(userWrapper);
+        }
+        newUsers.add(userWrapper);
+        state = state.copyWith(
+          users: newUsers,
+          lastUpdated: timestamp,
+        );
       }
     });
-    return {};
+    return UserStreamState(users: {}, lastUpdated: DateTime.now());
   }
 }
 
-class UserModelWrapper {
+@MappableClass()
+class UserModelWrapper with UserModelWrapperMappable {
   final String ipAddress;
   final UserModel user;
   final DateTime timestamp;
@@ -89,18 +103,39 @@ class UserModelWrapper {
     required this.user,
     required this.timestamp,
   });
+
+  @override
+  bool operator ==(Object other) {
+    if (other is UserModelWrapper) {
+      return ipAddress == other.ipAddress;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => ipAddress.hashCode;
 }
 
-class UserModel {
+@MappableClass()
+class UserModel with UserModelMappable {
   final String name;
 
   const UserModel({required this.name});
 }
 
-/// Provider that gets the current user's name
-@riverpod
-String userName(Ref ref) {
-  return StorageHelper().loadName();
+@MappableClass(discriminatorKey: 'type')
+sealed class UdpMessage with UdpMessageMappable {
+  const UdpMessage({required this.type});
+  final String type;
+}
+
+@MappableClass(discriminatorValue: 'discovery')
+class DiscoveryMessage extends UdpMessage with DiscoveryMessageMappable {
+  final UserModel user;
+  const DiscoveryMessage({
+    required this.user,
+    super.type = 'discovery',
+  });
 }
 
 /// Provider that sends hello messages via UDP every second
@@ -122,13 +157,14 @@ class UdpHelloSender extends _$UdpHelloSender {
 
   void _startSending() async {
     final socket = await ref.read(udpSocketProvider.future);
-    final userName = ref.read(userNameProvider);
+    final userName = StorageHelper().loadName();
 
     // Enable broadcast mode on the socket
     socket.broadcastEnabled = true;
 
-    // Create the hello message in the format "Hello|username"
-    final message = utf8.encode('Hello|$userName');
+    final message = DiscoveryMessage(user: UserModel(name: userName));
+    final messageJson = message.toJson();
+    final messageBytes = utf8.encode(messageJson);
 
     // Broadcast address - sends to all devices on the network
     final broadcastAddress = InternetAddress('255.255.255.255');
@@ -136,7 +172,7 @@ class UdpHelloSender extends _$UdpHelloSender {
     // Send hello message every second
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       try {
-        socket.send(message, broadcastAddress, udpPort);
+        socket.send(messageBytes, broadcastAddress, udpPort);
       } catch (e) {
         // Handle any errors silently or log them if needed
         debugPrint('Error sending UDP hello message: $e');

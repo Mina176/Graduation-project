@@ -43,30 +43,12 @@ final udpDataStreamProvider = AutoDisposeStreamProvider<Datagram>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UdpDataStreamRef = AutoDisposeStreamProviderRef<Datagram>;
-String _$userNameHash() => r'40e9423a58267c86be323122b88e62a6b1b8b2b2';
-
-/// Provider that gets the current user's name
-///
-/// Copied from [userName].
-@ProviderFor(userName)
-final userNameProvider = AutoDisposeProvider<String>.internal(
-  userName,
-  name: r'userNameProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$userNameHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef UserNameRef = AutoDisposeProviderRef<String>;
-String _$userStreamHash() => r'6a29f787ed1d3e84d58e94f30a04dc847df53258';
+String _$userStreamHash() => r'03199fc005f0410ace29c7fedc338941c6ed780b';
 
 /// See also [UserStream].
 @ProviderFor(UserStream)
 final userStreamProvider =
-    AutoDisposeNotifierProvider<UserStream, Set<UserModelWrapper>>.internal(
+    AutoDisposeNotifierProvider<UserStream, UserStreamState>.internal(
   UserStream.new,
   name: r'userStreamProvider',
   debugGetCreateSourceHash:
@@ -75,8 +57,8 @@ final userStreamProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$UserStream = AutoDisposeNotifier<Set<UserModelWrapper>>;
-String _$udpHelloSenderHash() => r'92312ec2e8e8a2e29757d1e0bcd620b7b7327350';
+typedef _$UserStream = AutoDisposeNotifier<UserStreamState>;
+String _$udpHelloSenderHash() => r'df71ee3e79471b452ff08f964142f9883a826704';
 
 /// Provider that sends hello messages via UDP every second
 ///
