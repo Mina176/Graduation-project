@@ -102,17 +102,6 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      try {
-        final result = readQrcode(pickedFile.path);
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('no qr found')),
-          );
-        }
-        return;
-      }
-
       final result = readQrcode(pickedFile.path);
 
       final Map<String, dynamic> userData = jsonDecode(result);
