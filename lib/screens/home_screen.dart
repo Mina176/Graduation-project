@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_project/screens/info_screen.dart';
-import 'package:graduation_project/screens/send_message.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:graduation_project/screens/login_screen.dart';
 import 'package:graduation_project/services/storage_helper/storage_helper.dart';
-import 'package:graduation_project/widgets/custom_list_item.dart';
+import 'package:graduation_project/services/udp/udp_discovery.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({
     super.key,
-    required this.onlineUsers,
   });
-  final Map<String, String> onlineUsers;
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   final userName = StorageHelper().loadName();
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(userStreamProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -47,31 +48,22 @@ class _HomeScreenState extends State<HomeScreen> {
               // CustomAppBar(userName: userName),
               SizedBox(height: 8),
               Expanded(
-                child: widget.onlineUsers.isEmpty
+                child: state.users.isEmpty
                     ? Center(
                         child: Text("Searching for users...",
                             style: TextStyle(color: Colors.grey)))
                     : ListView.separated(
-                        itemCount: widget.onlineUsers.length,
+                        itemCount: state.users.length,
                         separatorBuilder: (BuildContext context, int index) =>
                             Divider(),
                         itemBuilder: (context, index) {
-                          final userName =
-                              widget.onlineUsers.entries.elementAt(index).value;
-                          final userIp =
-                              widget.onlineUsers.entries.elementAt(index).key;
-                          return CustomListTile(
-                            name: userName,
-                            localIpAddress: userIp,
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => SendMessage(
-                                    userIp: userIp,
-                                  ),
-                                ),
-                              );
-                            },
+                          final user = state.users.elementAt(index);
+                          return ListTile(
+                            iconColor: Colors.green,
+                            leading: const Icon(Icons.devices),
+                            title: Text(user.user.name),
+                            subtitle:
+                                Text('${user.ipAddress}\n${user.timestamp}'),
                           );
                         },
                       ),
