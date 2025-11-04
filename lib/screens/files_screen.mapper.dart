@@ -143,19 +143,24 @@ class FileModelMapper extends ClassMapperBase<FileModel> {
   static FileContent _$content(FileModel v) => v.content;
   static const Field<FileModel, FileContent> _f$content =
       Field('content', _$content);
+  static FileUploadStatus _$uploadStatus(FileModel v) => v.uploadStatus;
+  static const Field<FileModel, FileUploadStatus> _f$uploadStatus =
+      Field('uploadStatus', _$uploadStatus);
 
   @override
   final MappableFields<FileModel> fields = const {
     #id: _f$id,
     #fileName: _f$fileName,
     #content: _f$content,
+    #uploadStatus: _f$uploadStatus,
   };
 
   static FileModel _instantiate(DecodingData data) {
     return FileModel(
         id: data.dec(_f$id),
         fileName: data.dec(_f$fileName),
-        content: data.dec(_f$content));
+        content: data.dec(_f$content),
+        uploadStatus: data.dec(_f$uploadStatus));
   }
 
   @override
@@ -209,7 +214,11 @@ extension FileModelValueCopy<$R, $Out> on ObjectCopyWith<$R, FileModel, $Out> {
 
 abstract class FileModelCopyWith<$R, $In extends FileModel, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  $R call({String? id, String? fileName, FileContent? content});
+  $R call(
+      {String? id,
+      String? fileName,
+      FileContent? content,
+      FileUploadStatus? uploadStatus});
   FileModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -222,17 +231,23 @@ class _FileModelCopyWithImpl<$R, $Out>
   late final ClassMapperBase<FileModel> $mapper =
       FileModelMapper.ensureInitialized();
   @override
-  $R call({String? id, String? fileName, FileContent? content}) =>
+  $R call(
+          {String? id,
+          String? fileName,
+          FileContent? content,
+          FileUploadStatus? uploadStatus}) =>
       $apply(FieldCopyWithData({
         if (id != null) #id: id,
         if (fileName != null) #fileName: fileName,
-        if (content != null) #content: content
+        if (content != null) #content: content,
+        if (uploadStatus != null) #uploadStatus: uploadStatus
       }));
   @override
   FileModel $make(CopyWithData data) => FileModel(
       id: data.get(#id, or: $value.id),
       fileName: data.get(#fileName, or: $value.fileName),
-      content: data.get(#content, or: $value.content));
+      content: data.get(#content, or: $value.content),
+      uploadStatus: data.get(#uploadStatus, or: $value.uploadStatus));
 
   @override
   FileModelCopyWith<$R2, FileModel, $Out2> $chain<$R2, $Out2>(

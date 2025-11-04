@@ -147,19 +147,24 @@ class UserModelWrapperMapper extends ClassMapperBase<UserModelWrapper> {
   static DateTime _$timestamp(UserModelWrapper v) => v.timestamp;
   static const Field<UserModelWrapper, DateTime> _f$timestamp =
       Field('timestamp', _$timestamp);
+  static int _$availableStorage(UserModelWrapper v) => v.availableStorage;
+  static const Field<UserModelWrapper, int> _f$availableStorage =
+      Field('availableStorage', _$availableStorage);
 
   @override
   final MappableFields<UserModelWrapper> fields = const {
     #ipAddress: _f$ipAddress,
     #user: _f$user,
     #timestamp: _f$timestamp,
+    #availableStorage: _f$availableStorage,
   };
 
   static UserModelWrapper _instantiate(DecodingData data) {
     return UserModelWrapper(
         ipAddress: data.dec(_f$ipAddress),
         user: data.dec(_f$user),
-        timestamp: data.dec(_f$timestamp));
+        timestamp: data.dec(_f$timestamp),
+        availableStorage: data.dec(_f$availableStorage));
   }
 
   @override
@@ -218,7 +223,11 @@ extension UserModelWrapperValueCopy<$R, $Out>
 abstract class UserModelWrapperCopyWith<$R, $In extends UserModelWrapper, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   UserModelCopyWith<$R, UserModel, UserModel> get user;
-  $R call({String? ipAddress, UserModel? user, DateTime? timestamp});
+  $R call(
+      {String? ipAddress,
+      UserModel? user,
+      DateTime? timestamp,
+      int? availableStorage});
   UserModelWrapperCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
       Then<$Out2, $R2> t);
 }
@@ -235,17 +244,24 @@ class _UserModelWrapperCopyWithImpl<$R, $Out>
   UserModelCopyWith<$R, UserModel, UserModel> get user =>
       $value.user.copyWith.$chain((v) => call(user: v));
   @override
-  $R call({String? ipAddress, UserModel? user, DateTime? timestamp}) =>
+  $R call(
+          {String? ipAddress,
+          UserModel? user,
+          DateTime? timestamp,
+          int? availableStorage}) =>
       $apply(FieldCopyWithData({
         if (ipAddress != null) #ipAddress: ipAddress,
         if (user != null) #user: user,
-        if (timestamp != null) #timestamp: timestamp
+        if (timestamp != null) #timestamp: timestamp,
+        if (availableStorage != null) #availableStorage: availableStorage
       }));
   @override
   UserModelWrapper $make(CopyWithData data) => UserModelWrapper(
       ipAddress: data.get(#ipAddress, or: $value.ipAddress),
       user: data.get(#user, or: $value.user),
-      timestamp: data.get(#timestamp, or: $value.timestamp));
+      timestamp: data.get(#timestamp, or: $value.timestamp),
+      availableStorage:
+          data.get(#availableStorage, or: $value.availableStorage));
 
   @override
   UserModelWrapperCopyWith<$R2, UserModelWrapper, $Out2> $chain<$R2, $Out2>(
@@ -425,6 +441,9 @@ class UdpDiscoveryMessageMapper
   @override
   final String id = 'UdpDiscoveryMessage';
 
+  static int _$availableStorage(UdpDiscoveryMessage v) => v.availableStorage;
+  static const Field<UdpDiscoveryMessage, int> _f$availableStorage =
+      Field('availableStorage', _$availableStorage);
   static UserModel _$user(UdpDiscoveryMessage v) => v.user;
   static const Field<UdpDiscoveryMessage, UserModel> _f$user =
       Field('user', _$user);
@@ -434,6 +453,7 @@ class UdpDiscoveryMessageMapper
 
   @override
   final MappableFields<UdpDiscoveryMessage> fields = const {
+    #availableStorage: _f$availableStorage,
     #user: _f$user,
     #type: _f$type,
   };
@@ -447,7 +467,9 @@ class UdpDiscoveryMessageMapper
 
   static UdpDiscoveryMessage _instantiate(DecodingData data) {
     return UdpDiscoveryMessage(
-        user: data.dec(_f$user), type: data.dec(_f$type));
+        availableStorage: data.dec(_f$availableStorage),
+        user: data.dec(_f$user),
+        type: data.dec(_f$type));
   }
 
   @override
@@ -507,7 +529,7 @@ abstract class UdpDiscoveryMessageCopyWith<$R, $In extends UdpDiscoveryMessage,
     $Out> implements UdpMessageCopyWith<$R, $In, $Out> {
   UserModelCopyWith<$R, UserModel, UserModel> get user;
   @override
-  $R call({UserModel? user, String? type});
+  $R call({int? availableStorage, UserModel? user, String? type});
   UdpDiscoveryMessageCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
       Then<$Out2, $R2> t);
 }
@@ -524,10 +546,16 @@ class _UdpDiscoveryMessageCopyWithImpl<$R, $Out>
   UserModelCopyWith<$R, UserModel, UserModel> get user =>
       $value.user.copyWith.$chain((v) => call(user: v));
   @override
-  $R call({UserModel? user, String? type}) => $apply(FieldCopyWithData(
-      {if (user != null) #user: user, if (type != null) #type: type}));
+  $R call({int? availableStorage, UserModel? user, String? type}) =>
+      $apply(FieldCopyWithData({
+        if (availableStorage != null) #availableStorage: availableStorage,
+        if (user != null) #user: user,
+        if (type != null) #type: type
+      }));
   @override
   UdpDiscoveryMessage $make(CopyWithData data) => UdpDiscoveryMessage(
+      availableStorage:
+          data.get(#availableStorage, or: $value.availableStorage),
       user: data.get(#user, or: $value.user),
       type: data.get(#type, or: $value.type));
 

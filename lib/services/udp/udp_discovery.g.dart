@@ -24,7 +24,7 @@ final udpSocketProvider = AutoDisposeFutureProvider<RawDatagramSocket>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UdpSocketRef = AutoDisposeFutureProviderRef<RawDatagramSocket>;
-String _$udpDataStreamHash() => r'86dd1cb3f2195ad0bbd81624f7774de2980c234c';
+String _$udpDataStreamHash() => r'77bef8eabb6f83292998ffbadf9013ba5e198e47';
 
 /// Stream provider that continuously reads UDP data from the socket
 ///
@@ -44,7 +44,7 @@ final udpDataStreamProvider = AutoDisposeStreamProvider<Datagram>.internal(
 // ignore: unused_element
 typedef UdpDataStreamRef = AutoDisposeStreamProviderRef<Datagram>;
 String _$listenForUdpFileMessagesHash() =>
-    r'c9e9d24520ceca16733de9b32fb380384b70b12c';
+    r'2792e52c85d44f0866c511820f9904ad88b21e99';
 
 /// See also [listenForUdpFileMessages].
 @ProviderFor(listenForUdpFileMessages)
@@ -61,7 +61,7 @@ final listenForUdpFileMessagesProvider = AutoDisposeProvider<void>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListenForUdpFileMessagesRef = AutoDisposeProviderRef<void>;
-String _$userStreamHash() => r'28880f5abbd88736a35e4af63b6bb5ba870cfc80';
+String _$userStreamHash() => r'016792f5fcf4e5394a58f331ff6e8fa94fc82865';
 
 /// See also [UserStream].
 @ProviderFor(UserStream)
@@ -76,7 +76,7 @@ final userStreamProvider =
 );
 
 typedef _$UserStream = AutoDisposeNotifier<UserStreamState>;
-String _$udpHelloSenderHash() => r'285feb573953c5aa0a5c1c98c4c575eaeb5df973';
+String _$udpHelloSenderHash() => r'833b2b52be815d7be5227645d61fd0b449663555';
 
 /// Provider that sends hello messages via UDP every second
 ///
