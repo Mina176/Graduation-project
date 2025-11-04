@@ -5,11 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graduation_project/screens/add_file_screen.dart';
 import 'package:graduation_project/screens/file_info.dart';
+import 'package:graduation_project/screens/settings_screen.dart';
 import 'package:graduation_project/services/udp/udp_discovery.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'files_screen.g.dart';
 part 'files_screen.mapper.dart';
+
+enum FileUploadStatus {
+  uploading,
+  uploaded,
+  notStarted,
+}
 
 @MappableClass()
 class FilesProviderState with FilesProviderStateMappable {
@@ -47,11 +54,13 @@ class FileModel with FileModelMappable {
   final String id;
   final String fileName;
   final FileContent content;
+  final FileUploadStatus uploadStatus;
 
   const FileModel({
     required this.id,
     required this.fileName,
     required this.content,
+    required this.uploadStatus,
   });
 }
 
@@ -72,6 +81,7 @@ class FilesProvider extends _$FilesProvider {
       timer = Timer.periodic(Duration(seconds: 1), (timer) {
         final fileIds = state.fileWithNoContentAndDownloading;
         if (fileIds.isEmpty) return;
+
         final message = UdpFileMessage(
           fileIds: fileIds.map((file) => file.id).toList(),
         );

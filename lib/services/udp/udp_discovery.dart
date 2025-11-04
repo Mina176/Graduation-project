@@ -6,6 +6,7 @@ import 'package:dart_mappable/dart_mappable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graduation_project/screens/files_screen.dart';
+import 'package:graduation_project/screens/settings_screen.dart';
 import 'package:graduation_project/services/tcp/poke.dart';
 import 'package:graduation_project/services/tcp/poke_listener.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -71,17 +72,18 @@ class UserStream extends _$UserStream {
       final datagram = next.value;
       if (datagram == null) return;
       final senderIpAddress = datagram.address.address;
-
       final data = datagram.data;
       final message = utf8.decode(data);
       final messageObject = UdpMessageMapper.fromJson(message);
       if (messageObject is UdpDiscoveryMessage) {
         final user = messageObject.user;
+        final storage = messageObject.availableStorage;
         final timestamp = DateTime.now();
         final userWrapper = UserModelWrapper(
           ipAddress: senderIpAddress,
           user: user,
           timestamp: timestamp,
+          availableStorage: storage,
         );
         final newUsers = state.users;
         if (newUsers.contains(userWrapper)) {
@@ -103,12 +105,13 @@ class UserModelWrapper with UserModelWrapperMappable {
   final String ipAddress;
   final UserModel user;
   final DateTime timestamp;
+  final int availableStorage;
 
-  const UserModelWrapper({
-    required this.ipAddress,
-    required this.user,
-    required this.timestamp,
-  });
+  const UserModelWrapper(
+      {required this.ipAddress,
+      required this.user,
+      required this.timestamp,
+      required this.availableStorage});
 
   @override
   bool operator ==(Object other) {
@@ -125,7 +128,6 @@ class UserModelWrapper with UserModelWrapperMappable {
 @MappableClass()
 class UserModel with UserModelMappable {
   final String name;
-
   const UserModel({required this.name});
 }
 
@@ -138,7 +140,9 @@ sealed class UdpMessage with UdpMessageMappable {
 @MappableClass(discriminatorValue: 'discovery')
 class UdpDiscoveryMessage extends UdpMessage with UdpDiscoveryMessageMappable {
   final UserModel user;
+  final int availableStorage;
   const UdpDiscoveryMessage({
+    required this.availableStorage,
     required this.user,
     super.type = 'discovery',
   });
@@ -147,7 +151,10 @@ class UdpDiscoveryMessage extends UdpMessage with UdpDiscoveryMessageMappable {
 @MappableClass(discriminatorValue: 'file')
 class UdpFileMessage extends UdpMessage with UdpFileMessageMappable {
   final List<String> fileIds;
-  const UdpFileMessage({required this.fileIds, super.type = 'file'});
+  const UdpFileMessage({
+    required this.fileIds,
+    super.type = 'file',
+  });
 }
 
 /// Provider that sends hello messages via UDP every second
@@ -157,8 +164,8 @@ class UdpHelloSender extends _$UdpHelloSender {
 
   @override
   void build() {
-    // Start sending hello messages
-    _startSending();
+    final availableStorage = ref.watch(userSettingsProvider).offeredStorageMB;
+    _startSending(availableStorage);
 
     // Clean up timer when provider is disposed
     ref.onDispose(() {
@@ -167,10 +174,11 @@ class UdpHelloSender extends _$UdpHelloSender {
     });
   }
 
-  void _startSending() async {
+  void _startSending(int fileSize) async {
     final socket = await ref.read(udpSocketProvider.future);
     final userName = StorageHelper().loadName();
-    final message = UdpDiscoveryMessage(user: UserModel(name: userName));
+    final message = UdpDiscoveryMessage(
+        user: UserModel(name: userName), availableStorage: fileSize);
 
     // Send hello message every second
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -208,8 +216,12 @@ void listenForUdpFileMessages(Ref ref) {
     final data = datagram.data;
     final message = utf8.decode(data);
     final messageObject = UdpMessageMapper.fromJson(message);
-    if (messageObject case UdpFileMessage(fileIds: final requestedFileIds)) {
+    if (messageObject
+        case UdpFileMessage(
+          fileIds: final requestedFileIds,
+        )) {
       log('Received UDP file message from $senderIpAddress: $requestedFileIds');
+
       final files = ref.read(filesProviderProvider).fileWithContent;
 
       for (final file in files) {

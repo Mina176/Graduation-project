@@ -3,7 +3,6 @@ import 'package:cryptography/cryptography.dart';
 import 'package:graduation_project/services/encryption_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 const passwordKey = 'user_password';
 
 class StorageHelper {
@@ -57,6 +56,14 @@ class StorageHelper {
 
   String loadName() {
     return _safePrefs.getString('name') ?? 'Unknown';
+  }
+
+  Future<void> saveAvailbleStorageInBytes(int availableStorage) async {
+    await _safePrefs.setInt('available_storage', availableStorage * 1000000);
+  }
+
+  int loadAvailableStorageInBytes() {
+    return _safePrefs.getInt('available_storage') ?? 0;
   }
 
 // start from here:
