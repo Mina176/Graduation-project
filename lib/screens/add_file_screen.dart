@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
@@ -36,8 +35,6 @@ class _AddFileScreenState extends ConsumerState<AddFileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(userStreamProvider);
-    final users = state.users.toList();
     return Scaffold(
       appBar: AppBar(title: Text('Add File')),
       floatingActionButton: FloatingActionButton(
@@ -86,45 +83,45 @@ class _AddFileScreenState extends ConsumerState<AddFileScreen> {
             decoration: InputDecoration(labelText: 'file content'),
           ),
           ElevatedButton(
-              onPressed: () => selectFile(), child: Text('pick file')),
+            onPressed: () {},
+            child: Text('pick file'),
+          ),
           SwitchListTile(
               title: Text('Start uploading immediately'),
               value: startUpload,
-              onChanged: isContentAvailable
-                  ? (value) {
-                      setState(() {
-                        startUpload = value;
-                      });
-                    }
-                  : null),
+              onChanged: (value) {
+                setState(() {
+                  startUpload = value;
+                });
+              }),
         ]),
       ),
     );
   }
 
-  Future<void> selectFile() async {
-    try {
-      final XFile? file = await openFile();
-      if (file == null) {
-        return;
-      }
+  // Future<void> selectFile() async {
+  //   try {
+  //     final XFile? file = await openFile();
+  //     if (file == null) {
+  //       return;
+  //     }
 
-      // 2. Read the file's content as bytes
-      final Uint8List fileBytes = await file.readAsBytes();
+  //     // 2. Read the file's content as bytes
+  //     final Uint8List fileBytes = await file.readAsBytes();
 
-      // 3. Encode bytes to Base64 to send as a string
-      final String fileContentBase64 = base64Encode(fileBytes);
+  //     // 3. Encode bytes to Base64 to send as a string
+  //     final String fileContentBase64 = base64Encode(fileBytes);
 
-      // 4. Update the UI
-      setState(() {
-        fileNameController.text = file.name;
-        fileContentController.text = fileContentBase64;
-      });
-    } catch (e) {
-      // Handle any errors that occur during file selection 
-      debugPrint('Error selecting file: $e');
-    }
-  }
+  //     // 4. Update the UI
+  //     setState(() {
+  //       fileNameController.text = file.name;
+  //       fileContentController.text = fileContentBase64;
+  //     });
+  //   } catch (e) {
+  //     // Handle any errors that occur during file selection
+  //     debugPrint('Error selecting file: $e');
+  //   }
+  // }
 
   // Future<void> pushFile() async {
   //   setState(() {

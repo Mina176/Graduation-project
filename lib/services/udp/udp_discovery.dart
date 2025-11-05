@@ -44,7 +44,7 @@ Stream<Datagram> udpDataStream(Ref ref) async* {
       final datagram = socket.receive();
       final senderIpAddress = datagram?.address.address;
       final localIpAddress = await getCurrentIpAddress();
-      if (senderIpAddress == localIpAddress) continue;
+      // if (senderIpAddress == localIpAddress) continue;
       if (datagram != null && datagram.data.isNotEmpty) {
         yield datagram;
       }
@@ -157,6 +157,44 @@ class UdpFileMessage extends UdpMessage with UdpFileMessageMappable {
   });
 }
 
+@MappableClass(discriminatorValue: 'uploadfile')
+class UdpUploadMessage extends UdpMessage with UdpUploadMessageMappable {
+  final List<String> fileIds;
+  final int fileSize;
+  final TcpMessage message;
+  UdpUploadMessage({
+    required this.fileIds,
+    required this.message,
+    required this.fileSize,
+    super.type = 'uploadfile',
+  });
+}
+
+@riverpod
+class UserSettings extends _$UserSettings {
+  @override
+  UserSettingsModel build() {
+    final initialStorage = StorageHelper().loadAvailableStorageInBytes();
+    return UserSettingsModel(offeredStorageMB: initialStorage);
+  }
+
+  void updateOfferedStorageMB(int value) {
+    state = state.copyWith(offeredStorageMB: value);
+  }
+}
+
+class UserSettingsModel {
+  final int offeredStorageMB;
+
+  const UserSettingsModel({required this.offeredStorageMB});
+
+  UserSettingsModel copyWith({
+    int? offeredStorageMB,
+  }) =>
+      UserSettingsModel(
+          offeredStorageMB: offeredStorageMB ?? this.offeredStorageMB);
+}
+
 /// Provider that sends hello messages via UDP every second
 @riverpod
 class UdpHelloSender extends _$UdpHelloSender {
@@ -209,6 +247,7 @@ void broadcastUdpMessage({
 // A provider that listens for udp file messages and sends them to the files provider
 @riverpod
 void listenForUdpFileMessages(Ref ref) {
+  final storage = ref.watch(userSettingsProvider);
   ref.listen(udpDataStreamProvider, (previous, next) {
     final datagram = next.value;
     if (datagram == null) return;
@@ -237,6 +276,13 @@ void listenForUdpFileMessages(Ref ref) {
             );
           }
         }
+      }
+    } else if (messageObject
+        case UdpUploadMessage(
+          fileSize: final requestedFileSize,
+        )) {
+      if (storage.offeredStorageMB <= requestedFileSize) {
+        receiveMessageContent(ref);
       }
     }
   });

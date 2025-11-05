@@ -7,7 +7,6 @@ import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-part 'info_screen.g.dart';
 
 class InfoScreen extends ConsumerStatefulWidget {
   const InfoScreen({super.key, required this.username});
@@ -74,9 +73,9 @@ class _InfoScreenState extends ConsumerState<InfoScreen> {
               border: OutlineInputBorder(),
             ),
             onChanged: (value) {
-              ref.read(userSettingsProvider.notifier).updateOfferedStorageMB(
-                    int.tryParse(value) ?? 0,
-                  );
+              // ref.read(userSettingsProvider.notifier).updateOfferedStorageMB(
+              //       int.tryParse(value) ?? 0,
+              //     );
               StorageHelper().saveAvailbleStorageInBytes(
                 int.tryParse(value) ?? 0,
               );
@@ -105,29 +104,3 @@ class _InfoScreenState extends ConsumerState<InfoScreen> {
     );
   }
 }
-
-@riverpod
-class UserSettings extends _$UserSettings {
-  @override
-  UserSettingsModel build() {
-    final initialStorage = StorageHelper().loadAvailableStorageInBytes();
-    return UserSettingsModel(offeredStorageMB: initialStorage);
-  }
-
-  void updateOfferedStorageMB(int value) {
-    state = state.copyWith(offeredStorageMB: value);
-  }
-}
-
-class UserSettingsModel {
-  final int offeredStorageMB;
-
-  const UserSettingsModel({required this.offeredStorageMB});
-
-  UserSettingsModel copyWith({
-    int? offeredStorageMB,
-  }) =>
-      UserSettingsModel(
-          offeredStorageMB: offeredStorageMB ?? this.offeredStorageMB);
-}
-

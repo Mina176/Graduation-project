@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/screens/info_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:graduation_project/screens/settings_screen.dart';
 import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 import 'package:graduation_project/services/udp/udp_discovery.dart';
 

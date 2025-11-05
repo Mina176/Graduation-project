@@ -380,6 +380,7 @@ class UdpMessageMapper extends ClassMapperBase<UdpMessage> {
       MapperContainer.globals.use(_instance = UdpMessageMapper._());
       UdpDiscoveryMessageMapper.ensureInitialized();
       UdpFileMessageMapper.ensureInitialized();
+      UdpUploadMessageMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -690,4 +691,159 @@ class _UdpFileMessageCopyWithImpl<$R, $Out>
   UdpFileMessageCopyWith<$R2, UdpFileMessage, $Out2> $chain<$R2, $Out2>(
           Then<$Out2, $R2> t) =>
       _UdpFileMessageCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class UdpUploadMessageMapper extends SubClassMapperBase<UdpUploadMessage> {
+  UdpUploadMessageMapper._();
+
+  static UdpUploadMessageMapper? _instance;
+  static UdpUploadMessageMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = UdpUploadMessageMapper._());
+      UdpMessageMapper.ensureInitialized().addSubMapper(_instance!);
+      TcpMessageMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'UdpUploadMessage';
+
+  static List<String> _$fileIds(UdpUploadMessage v) => v.fileIds;
+  static const Field<UdpUploadMessage, List<String>> _f$fileIds =
+      Field('fileIds', _$fileIds);
+  static TcpMessage _$message(UdpUploadMessage v) => v.message;
+  static const Field<UdpUploadMessage, TcpMessage> _f$message =
+      Field('message', _$message);
+  static int _$fileSize(UdpUploadMessage v) => v.fileSize;
+  static const Field<UdpUploadMessage, int> _f$fileSize =
+      Field('fileSize', _$fileSize);
+  static String _$type(UdpUploadMessage v) => v.type;
+  static const Field<UdpUploadMessage, String> _f$type =
+      Field('type', _$type, opt: true, def: 'uploadfile');
+
+  @override
+  final MappableFields<UdpUploadMessage> fields = const {
+    #fileIds: _f$fileIds,
+    #message: _f$message,
+    #fileSize: _f$fileSize,
+    #type: _f$type,
+  };
+
+  @override
+  final String discriminatorKey = 'type';
+  @override
+  final dynamic discriminatorValue = 'uploadfile';
+  @override
+  late final ClassMapperBase superMapper = UdpMessageMapper.ensureInitialized();
+
+  static UdpUploadMessage _instantiate(DecodingData data) {
+    return UdpUploadMessage(
+        fileIds: data.dec(_f$fileIds),
+        message: data.dec(_f$message),
+        fileSize: data.dec(_f$fileSize),
+        type: data.dec(_f$type));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static UdpUploadMessage fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<UdpUploadMessage>(map);
+  }
+
+  static UdpUploadMessage fromJson(String json) {
+    return ensureInitialized().decodeJson<UdpUploadMessage>(json);
+  }
+}
+
+mixin UdpUploadMessageMappable {
+  String toJson() {
+    return UdpUploadMessageMapper.ensureInitialized()
+        .encodeJson<UdpUploadMessage>(this as UdpUploadMessage);
+  }
+
+  Map<String, dynamic> toMap() {
+    return UdpUploadMessageMapper.ensureInitialized()
+        .encodeMap<UdpUploadMessage>(this as UdpUploadMessage);
+  }
+
+  UdpUploadMessageCopyWith<UdpUploadMessage, UdpUploadMessage, UdpUploadMessage>
+      get copyWith =>
+          _UdpUploadMessageCopyWithImpl<UdpUploadMessage, UdpUploadMessage>(
+              this as UdpUploadMessage, $identity, $identity);
+  @override
+  String toString() {
+    return UdpUploadMessageMapper.ensureInitialized()
+        .stringifyValue(this as UdpUploadMessage);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return UdpUploadMessageMapper.ensureInitialized()
+        .equalsValue(this as UdpUploadMessage, other);
+  }
+
+  @override
+  int get hashCode {
+    return UdpUploadMessageMapper.ensureInitialized()
+        .hashValue(this as UdpUploadMessage);
+  }
+}
+
+extension UdpUploadMessageValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, UdpUploadMessage, $Out> {
+  UdpUploadMessageCopyWith<$R, UdpUploadMessage, $Out>
+      get $asUdpUploadMessage => $base
+          .as((v, t, t2) => _UdpUploadMessageCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class UdpUploadMessageCopyWith<$R, $In extends UdpUploadMessage, $Out>
+    implements UdpMessageCopyWith<$R, $In, $Out> {
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get fileIds;
+  @override
+  $R call(
+      {List<String>? fileIds,
+      TcpMessage? message,
+      int? fileSize,
+      String? type});
+  UdpUploadMessageCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
+}
+
+class _UdpUploadMessageCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, UdpUploadMessage, $Out>
+    implements UdpUploadMessageCopyWith<$R, UdpUploadMessage, $Out> {
+  _UdpUploadMessageCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<UdpUploadMessage> $mapper =
+      UdpUploadMessageMapper.ensureInitialized();
+  @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get fileIds =>
+      ListCopyWith($value.fileIds, (v, t) => ObjectCopyWith(v, $identity, t),
+          (v) => call(fileIds: v));
+  @override
+  $R call(
+          {List<String>? fileIds,
+          TcpMessage? message,
+          int? fileSize,
+          String? type}) =>
+      $apply(FieldCopyWithData({
+        if (fileIds != null) #fileIds: fileIds,
+        if (message != null) #message: message,
+        if (fileSize != null) #fileSize: fileSize,
+        if (type != null) #type: type
+      }));
+  @override
+  UdpUploadMessage $make(CopyWithData data) => UdpUploadMessage(
+      fileIds: data.get(#fileIds, or: $value.fileIds),
+      message: data.get(#message, or: $value.message),
+      fileSize: data.get(#fileSize, or: $value.fileSize),
+      type: data.get(#type, or: $value.type));
+
+  @override
+  UdpUploadMessageCopyWith<$R2, UdpUploadMessage, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _UdpUploadMessageCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }

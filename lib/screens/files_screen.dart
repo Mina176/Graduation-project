@@ -64,6 +64,7 @@ class FileModel with FileModelMappable {
   });
 }
 
+// here i will start from
 @Riverpod(keepAlive: true)
 class FilesProvider extends _$FilesProvider {
   @override
@@ -81,7 +82,6 @@ class FilesProvider extends _$FilesProvider {
       timer = Timer.periodic(Duration(seconds: 1), (timer) {
         final fileIds = state.fileWithNoContentAndDownloading;
         if (fileIds.isEmpty) return;
-
         final message = UdpFileMessage(
           fileIds: fileIds.map((file) => file.id).toList(),
         );
@@ -126,7 +126,34 @@ class FilesProvider extends _$FilesProvider {
     });
   }
 }
+// @Riverpod(keepAlive: true)
+// class UploadingFilesProvider extend _$UploadingFilesProvider{
+//   @override
+//   FilesProviderState build() {
+//     Timer? timer;
+//     ref.onDispose(
+//       () {
+//         timer?.cancel();
+//         timer = null;
+//       },
+//     );
+//     () async {
+//       final socket = await ref.read(udpSocketProvider.future);
 
+//       timer = Timer.periodic(Duration(seconds: 1), (timer) {
+
+//         final message = UdpUploadMessage(
+//           fileIds: fileIds.map((file) => file.id).toList(),
+
+//        message:,
+//        fileSize:,
+//         );
+//         broadcastUdpMessage(socket: socket, message: message);
+//       });
+//     }();
+//     return FilesProviderState(files: []);
+//   }
+// }
 class FilesScreen extends ConsumerStatefulWidget {
   const FilesScreen({super.key});
 

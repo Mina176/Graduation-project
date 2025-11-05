@@ -24,7 +24,7 @@ final udpSocketProvider = AutoDisposeFutureProvider<RawDatagramSocket>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UdpSocketRef = AutoDisposeFutureProviderRef<RawDatagramSocket>;
-String _$udpDataStreamHash() => r'77bef8eabb6f83292998ffbadf9013ba5e198e47';
+String _$udpDataStreamHash() => r'56749ac9bfb8bf9388d9430adbf37ecac5c10e3f';
 
 /// Stream provider that continuously reads UDP data from the socket
 ///
@@ -44,7 +44,7 @@ final udpDataStreamProvider = AutoDisposeStreamProvider<Datagram>.internal(
 // ignore: unused_element
 typedef UdpDataStreamRef = AutoDisposeStreamProviderRef<Datagram>;
 String _$listenForUdpFileMessagesHash() =>
-    r'2792e52c85d44f0866c511820f9904ad88b21e99';
+    r'c3d4067937f91f1efd33878dcaad09278f0afeda';
 
 /// See also [listenForUdpFileMessages].
 @ProviderFor(listenForUdpFileMessages)
@@ -76,6 +76,21 @@ final userStreamProvider =
 );
 
 typedef _$UserStream = AutoDisposeNotifier<UserStreamState>;
+String _$userSettingsHash() => r'493692efedc2e24ea73e8e7ce2e4a518eaa944b8';
+
+/// See also [UserSettings].
+@ProviderFor(UserSettings)
+final userSettingsProvider =
+    AutoDisposeNotifierProvider<UserSettings, UserSettingsModel>.internal(
+  UserSettings.new,
+  name: r'userSettingsProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$userSettingsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$UserSettings = AutoDisposeNotifier<UserSettingsModel>;
 String _$udpHelloSenderHash() => r'833b2b52be815d7be5227645d61fd0b449663555';
 
 /// Provider that sends hello messages via UDP every second
