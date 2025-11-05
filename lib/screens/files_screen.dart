@@ -1,11 +1,9 @@
 import 'dart:async';
-
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graduation_project/screens/add_file_screen.dart';
 import 'package:graduation_project/screens/file_info.dart';
-import 'package:graduation_project/screens/settings_screen.dart';
 import 'package:graduation_project/services/udp/udp_discovery.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

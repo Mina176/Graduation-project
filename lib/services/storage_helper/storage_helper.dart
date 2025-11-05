@@ -58,11 +58,11 @@ class StorageHelper {
     return _safePrefs.getString('name') ?? 'Unknown';
   }
 
-  Future<void> saveAvailbleStorageInBytes(int availableStorage) async {
-    await _safePrefs.setInt('available_storage', availableStorage * 1000000);
+  Future<void> saveAvailbleStorage(int availableStorage) async {
+    await _safePrefs.setInt('available_storage', availableStorage);
   }
 
-  int loadAvailableStorageInBytes() {
+  int loadAvailbleStorage() {
     return _safePrefs.getInt('available_storage') ?? 0;
   }
 

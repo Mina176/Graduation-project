@@ -4,19 +4,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graduation_project/screens/login_screen.dart';
 import 'package:graduation_project/services/storage_helper/storage_helper.dart';
-
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+part 'user_settings_screen.g.dart';
 
-class InfoScreen extends ConsumerStatefulWidget {
-  const InfoScreen({super.key, required this.username});
+class UserSettingsScreen extends ConsumerStatefulWidget {
+  const UserSettingsScreen({super.key, required this.username});
   final String username;
 
   @override
-  ConsumerState<InfoScreen> createState() => _InfoScreenState();
+  ConsumerState<UserSettingsScreen> createState() => _InfoScreenState();
 }
 
-class _InfoScreenState extends ConsumerState<InfoScreen> {
+class _InfoScreenState extends ConsumerState<UserSettingsScreen> {
   late QrImage qrImage;
 
   String username = StorageHelper().loadName();
@@ -67,18 +67,15 @@ class _InfoScreenState extends ConsumerState<InfoScreen> {
             ),
           ),
           TextField(
-            maxLength: 18,
             decoration: InputDecoration(
-              labelText: 'Offered Storage (MB)',
+              labelText: 'Number of Offered Characters',
               border: OutlineInputBorder(),
             ),
             onChanged: (value) {
-              // ref.read(userSettingsProvider.notifier).updateOfferedStorageMB(
-              //       int.tryParse(value) ?? 0,
-              //     );
-              StorageHelper().saveAvailbleStorageInBytes(
-                int.tryParse(value) ?? 0,
-              );
+              //store number of characters
+              final intValue = int.tryParse(value) ?? 0;
+              ref.read(userSettingsProvider.notifier).updateOffered(intValue);
+              StorageHelper().saveAvailbleStorage(intValue);
             },
             keyboardType: TextInputType.number,
             inputFormatters: [
@@ -103,4 +100,28 @@ class _InfoScreenState extends ConsumerState<InfoScreen> {
       ),
     );
   }
+}
+
+@riverpod
+class UserSettings extends _$UserSettings {
+  @override
+  UserSettingsModel build() {
+    final initialStorage = StorageHelper().loadAvailbleStorage();
+    return UserSettingsModel(offeredStorage: initialStorage);
+  }
+
+  void updateOffered(int value) {
+    state = state.copyWith(offeredStorageMB: value);
+  }
+}
+
+class UserSettingsModel {
+  final int offeredStorage;
+
+  const UserSettingsModel({required this.offeredStorage});
+
+  UserSettingsModel copyWith({
+    int? offeredStorageMB,
+  }) =>
+      UserSettingsModel(offeredStorage: offeredStorageMB ?? 0);
 }

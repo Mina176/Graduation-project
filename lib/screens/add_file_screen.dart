@@ -77,23 +77,29 @@ class _AddFileScreenState extends ConsumerState<AddFileScreen> {
             controller: fileNameController,
             decoration: InputDecoration(labelText: 'File Name'),
           ),
-          //content is optional
+          SwitchListTile(
+              title: Text('content available'),
+              value: isContentAvailable,
+              onChanged: (value) {
+                setState(() {
+                  isContentAvailable = value;
+                });
+              }),
           TextField(
+            enabled: isContentAvailable,
             controller: fileContentController,
             decoration: InputDecoration(labelText: 'file content'),
-          ),
-          ElevatedButton(
-            onPressed: () {},
-            child: Text('pick file'),
           ),
           SwitchListTile(
               title: Text('Start uploading immediately'),
               value: startUpload,
-              onChanged: (value) {
-                setState(() {
-                  startUpload = value;
-                });
-              }),
+              onChanged: isContentAvailable
+                  ? (value) {
+                      setState(() {
+                        startUpload = value;
+                      });
+                    }
+                  : null),
         ]),
       ),
     );
@@ -133,11 +139,7 @@ class _AddFileScreenState extends ConsumerState<AddFileScreen> {
   //   final fileName = fileNameController.text;
   //   final content = fileContentController.text;
   //   if (id.isEmpty || fileName.isEmpty || content.isEmpty) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(
-  //           content: Text('File ID, Name, and Content are required to push.')),
-  //     );
-  //     setState(() {
+
   //       isPushing = false;
   //     });
   //     return;

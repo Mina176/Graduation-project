@@ -6,7 +6,7 @@ import 'package:dart_mappable/dart_mappable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graduation_project/screens/files_screen.dart';
-import 'package:graduation_project/screens/settings_screen.dart';
+import 'package:graduation_project/screens/user_settings_screen.dart';
 import 'package:graduation_project/services/tcp/poke.dart';
 import 'package:graduation_project/services/tcp/poke_listener.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -44,7 +44,7 @@ Stream<Datagram> udpDataStream(Ref ref) async* {
       final datagram = socket.receive();
       final senderIpAddress = datagram?.address.address;
       final localIpAddress = await getCurrentIpAddress();
-      // if (senderIpAddress == localIpAddress) continue;
+      if (senderIpAddress == localIpAddress) continue;
       if (datagram != null && datagram.data.isNotEmpty) {
         yield datagram;
       }
@@ -170,31 +170,6 @@ class UdpUploadMessage extends UdpMessage with UdpUploadMessageMappable {
   });
 }
 
-@riverpod
-class UserSettings extends _$UserSettings {
-  @override
-  UserSettingsModel build() {
-    final initialStorage = StorageHelper().loadAvailableStorageInBytes();
-    return UserSettingsModel(offeredStorageMB: initialStorage);
-  }
-
-  void updateOfferedStorageMB(int value) {
-    state = state.copyWith(offeredStorageMB: value);
-  }
-}
-
-class UserSettingsModel {
-  final int offeredStorageMB;
-
-  const UserSettingsModel({required this.offeredStorageMB});
-
-  UserSettingsModel copyWith({
-    int? offeredStorageMB,
-  }) =>
-      UserSettingsModel(
-          offeredStorageMB: offeredStorageMB ?? this.offeredStorageMB);
-}
-
 /// Provider that sends hello messages via UDP every second
 @riverpod
 class UdpHelloSender extends _$UdpHelloSender {
@@ -202,7 +177,7 @@ class UdpHelloSender extends _$UdpHelloSender {
 
   @override
   void build() {
-    final availableStorage = ref.watch(userSettingsProvider).offeredStorageMB;
+    final availableStorage = ref.watch(userSettingsProvider).offeredStorage;
     _startSending(availableStorage);
 
     // Clean up timer when provider is disposed
@@ -212,11 +187,12 @@ class UdpHelloSender extends _$UdpHelloSender {
     });
   }
 
-  void _startSending(int fileSize) async {
+  void _startSending(int availableStorage) async {
     final socket = await ref.read(udpSocketProvider.future);
     final userName = StorageHelper().loadName();
     final message = UdpDiscoveryMessage(
-        user: UserModel(name: userName), availableStorage: fileSize);
+        user: UserModel(name: userName), availableStorage: availableStorage);
+    debugPrint(message.toJson());
 
     // Send hello message every second
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -247,7 +223,7 @@ void broadcastUdpMessage({
 // A provider that listens for udp file messages and sends them to the files provider
 @riverpod
 void listenForUdpFileMessages(Ref ref) {
-  final storage = ref.watch(userSettingsProvider);
+  final userSettings = ref.watch(userSettingsProvider);
   ref.listen(udpDataStreamProvider, (previous, next) {
     final datagram = next.value;
     if (datagram == null) return;
@@ -266,7 +242,9 @@ void listenForUdpFileMessages(Ref ref) {
       for (final file in files) {
         final content = file.content;
         if (content case FileContentAvailable(content: final contentValue)) {
-          if (requestedFileIds.contains(file.id)) {
+          if (requestedFileIds.contains(file.id) &&
+              userSettings.offeredStorage >= contentValue.length) {
+            
             sendTcpMessage(
               targetIp: senderIpAddress,
               message: TcpFileMessage(
@@ -274,16 +252,17 @@ void listenForUdpFileMessages(Ref ref) {
                 content: contentValue,
               ),
             );
-          }
+          } else {}
         }
       }
-    } else if (messageObject
-        case UdpUploadMessage(
-          fileSize: final requestedFileSize,
-        )) {
-      if (storage.offeredStorageMB <= requestedFileSize) {
-        receiveMessageContent(ref);
-      }
     }
+    // else if (messageObject
+    //     case UdpUploadMessage(
+    //       fileSize: final requestedFileSize,
+    //     )) {
+    //   if (userSettings.offeredStorage <= requestedFileSize) {
+    //     receiveMessageContent(ref);
+    //   }
+    // }
   });
 }

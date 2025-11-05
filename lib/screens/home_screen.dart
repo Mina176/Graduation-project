@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:graduation_project/screens/settings_screen.dart';
+import 'package:graduation_project/screens/user_settings_screen.dart';
 import 'package:graduation_project/services/storage_helper/storage_helper.dart';
 import 'package:graduation_project/services/udp/udp_discovery.dart';
 
@@ -30,7 +30,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => InfoScreen(
+                    builder: (context) => UserSettingsScreen(
                       username: userName,
                     ),
                   ),
